@@ -1,0 +1,13 @@
+name = "BioPipelines"
+uuid = "3ee1394b-c0b4-492e-bb3c-d8bc89983562"
+authors = ["cihga39871 <cihga39871@outlook.com> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
