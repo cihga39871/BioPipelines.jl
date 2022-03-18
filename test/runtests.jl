@@ -2,5 +2,6 @@ using BioPipelines
 using Test
 
 @testset "BioPipelines.jl" begin
-    # Write your tests here.
+    include("trimming.jl")
+
 end
