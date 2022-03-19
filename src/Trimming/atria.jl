@@ -20,7 +20,7 @@ prog_atria = CmdProgram(
     ],
     validate_inputs  = do_nothing,
     prerequisites    = do_nothing,
-    cmd              = `atria -o OUTPUT-DIR -a ADAPTER1 -A ADAPTER2 -t THREADS -g COMPRESS -r READ1 OTHER-ARGS -R READ2`,
+    cmd              = `$dep_atria -o OUTPUT-DIR -a ADAPTER1 -A ADAPTER2 -t THREADS -g COMPRESS -r READ1 OTHER-ARGS -R READ2`,
     infer_outputs    = infer_atria_outputs,
     outputs          = [
         "OUTPUT-R1" => "auto generated; do not change",

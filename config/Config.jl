@@ -9,9 +9,27 @@ module Config
 isfile(joinpath(@__DIR__, "config.secret.jl")) || touch(joinpath(@__DIR__, "config.secret.jl"))
 
 ## Dependencies
+
+# Common
+path_to_samtools = "samtools"
+
+# Trimming
 path_to_atria = "atria"
 args_to_atria = `--check-identifier --polyG`
 
+# Mapping
+path_to_bwa = "bwa"
+args_to_bwa = ``
+
+path_to_bwa_mem2 = "bwa-mem2"
+args_to_bwa_mem2 = ``
+
+
 ## The previous settings will be override by the secret configure file
 include("config.secret.jl")
+
+SCRIPTS_DIR = abspath(@__DIR__, "..", "src", "scripts")
+SCRIPTS = Dict{String, String}(
+    [(replace(s, r"\.jl$" => ""), joinpath(SCRIPTS_DIR, s)) for s in readdir(SCRIPTS_DIR)]
+)
 end
