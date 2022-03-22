@@ -26,7 +26,9 @@ prog_atria = CmdProgram(
         "OUTPUT-R1" => "auto generated; do not change",
         "OUTPUT-R2" => "auto generated; do not change"
     ],
-    validate_outputs = do_nothing,
+    validate_outputs = o -> begin
+        isfile(o["OUTPUT-R1"]) && isfile(o["OUTPUT-R2"])
+    end,
     wrap_up          = do_nothing
 )
 prog_atria_pe = prog_atria

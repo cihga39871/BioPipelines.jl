@@ -32,7 +32,9 @@ prog_bwa_mem2 = CmdProgram(
     outputs          = [
         "BAM" => String=> "<READ1>.bam"
     ],
-    validate_outputs = do_nothing,
+    validate_outputs = o -> begin
+        isfile(o["BAM"])
+    end,
     wrap_up          = do_nothing
 )
 
@@ -67,11 +69,12 @@ function bwa_mem2_index(bwa_reference::String; bwa=dep_bwa_mem2)::String
         error("bwa_mem2_index(): file not exist: $bwa_reference")
     end
 
-    # build bwa index
-    @info "bwa_mem2_index(): building bwa mem 2 reference: $bwa_reference"
     # lock to prevent doing multiple index at the same time
     index_lock = bwa_reference * ".bwa_index_lock"  # lock should be the same as BWA 1.
     touch(index_lock)
+
+    # build bwa index
+    @info "bwa_mem2_index(): building bwa mem 2 reference: $bwa_reference"
     try
         run(`$bwa index $bwa_reference`)
         rm(index_lock, force=true)

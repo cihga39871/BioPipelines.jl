@@ -14,4 +14,7 @@ include(joinpath("Trimming", "Trimming.jl"))
 include(joinpath("Mapping", "Mapping.jl"))
 @reexport using .Mapping
 
+include(joinpath("Assembly", "Assembly.jl"))
+@reexport using .Assembly
+
 end

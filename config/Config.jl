@@ -24,6 +24,10 @@ args_to_bwa = ``
 path_to_bwa_mem2 = "bwa-mem2"
 args_to_bwa_mem2 = ``
 
+# Assembly
+path_to_velveth = "velveth"
+path_to_velvetg = "velvetg"
+path_to_velvet_optimizer = "VelvetOptimiser.pl"
 
 ## The previous settings will be override by the secret configure file
 include("config.secret.jl")
