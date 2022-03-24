@@ -24,3 +24,6 @@ docs/site/
 Manifest.toml
 
 config/config.secret.jl
+
+# Database
+db/

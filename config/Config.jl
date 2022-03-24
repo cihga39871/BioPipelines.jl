@@ -29,6 +29,9 @@ path_to_velveth = "velveth"
 path_to_velvetg = "velvetg"
 path_to_velvet_optimizer = "VelvetOptimiser.pl"
 
+# Accession to Taxonomy database; a file ending with sql (taxonomizr)
+path_to_taxonomizr_db = abspath(@__DIR__, "..", "db", "taxonomizr", "accessionTaxa.sql")
+
 ## The previous settings will be override by the secret configure file
 include("config.secret.jl")
 

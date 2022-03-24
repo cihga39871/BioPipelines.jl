@@ -1,5 +1,8 @@
 #!julia
 
+# using Pkg
+# Pkg.activate(abspath(@__DIR__, "..", ".."))
+
 if "-h" in ARGS || "--help" in ARGS || length(ARGS) > 2
     println("""
     Usage:
