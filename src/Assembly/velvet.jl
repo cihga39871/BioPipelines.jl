@@ -19,7 +19,7 @@ prog_velvet = JuliaProgram(
         "READ2" => Union{String, Cmd} => ``,
         "THREADS" => Int => 8,
         "THREADS-SAMTOOLS" => Int => 4,
-        "OTHER-ARGS-VELVETH" => Cmd => Config.args_to_velveth
+        "OTHER-ARGS-VELVETH" => Cmd => Config.args_to_velveth,
         "OTHER-ARGS-VELVETG" => Cmd => Config.args_to_velvetg
     ],
     validate_inputs  = i -> begin
