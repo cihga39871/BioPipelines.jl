@@ -3,6 +3,8 @@
 The Config module stores the paths and arguments of commandline.
 
 If you want to change variables in this file, please change it in `config.secret.jl`. Any changes to `Config.jl` file might be recorded to Github, while `config.secret.jl` will not save to Github.
+
+In addition, you can also create a config file named `.BioPipelinesConfig.jl` in your home directory.
 """
 module Config
 
@@ -30,10 +32,25 @@ path_to_velvetg = "velvetg"
 path_to_velvet_optimizer = "VelvetOptimiser.pl"
 
 # Accession to Taxonomy database; a file ending with sql (taxonomizr)
-path_to_taxonomizr_db = abspath(@__DIR__, "..", "db", "taxonomizr", "accessionTaxa.sql")
+path_to_taxonomizr_db = abspath(@__DIR__, "..", "..", "db", "taxonomizr", "accessionTaxa.sql")
 
 ## The previous settings will be override by the secret configure file
-include("config.secret.jl")
+try
+    include("config.secret.jl")
+catch
+    error("Loading secret configuration file failed: $(joinpath(@__DIR__, "config.secret.jl"))")
+    rethrow()
+end
+
+personal_config = joinpath(homedir(), ".BioPipelinesConfig.jl")
+if isfile(personal_config)
+    try
+        include(personal_config)
+    catch
+        error("Loading personal configuration file failed: $personal_config")
+        rethrow()
+    end
+end
 
 SCRIPTS_DIR = abspath(@__DIR__, "..", "src", "scripts")
 SCRIPTS = Dict{String, String}(

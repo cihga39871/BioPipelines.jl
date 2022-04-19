@@ -23,7 +23,7 @@ docs/site/
 # environment.
 Manifest.toml
 
-config/config.secret.jl
+src/Config/config.secret.jl
 
 # Database
 db/
