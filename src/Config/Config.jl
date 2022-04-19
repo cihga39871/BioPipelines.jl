@@ -30,6 +30,9 @@ args_to_bwa_mem2 = ``
 path_to_velveth = "velveth"
 path_to_velvetg = "velvetg"
 path_to_velvet_optimizer = "VelvetOptimiser.pl"
+args_to_velveth = ``
+args_to_velvetg = ``
+args_to_velvet_optimizer = ``
 
 # Accession to Taxonomy database; a file ending with sql (taxonomizr)
 path_to_taxonomizr_db = abspath(@__DIR__, "..", "..", "db", "taxonomizr", "accessionTaxa.sql")
