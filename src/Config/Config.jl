@@ -52,7 +52,7 @@ if isfile(personal_config)
     end
 end
 
-SCRIPTS_DIR = abspath(@__DIR__, "..", "src", "scripts")
+SCRIPTS_DIR = abspath(@__DIR__, "..", "scripts")
 SCRIPTS = Dict{String, String}(
     [(replace(s, r"\.jl$" => ""), joinpath(SCRIPTS_DIR, s)) for s in readdir(SCRIPTS_DIR)]
 )
