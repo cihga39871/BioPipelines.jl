@@ -8,6 +8,8 @@ In addition, you can also create a config file named `.BioPipelinesConfig.jl` in
 """
 module Config
 
+export update_config
+
 isfile(joinpath(@__DIR__, "config.secret.jl")) || touch(joinpath(@__DIR__, "config.secret.jl"))
 
 ## Dependencies
@@ -38,25 +40,25 @@ args_to_velvet_optimizer = ``
 path_to_taxonomizr_db = abspath(@__DIR__, "..", "..", "db", "taxonomizr", "accessionTaxa.sql")
 
 ## The previous settings will be override by the secret configure file
-try
-    include("config.secret.jl")
-catch
-    error("Loading secret configuration file failed: $(joinpath(@__DIR__, "config.secret.jl"))")
-    rethrow()
-end
-
-personal_config = joinpath(homedir(), ".BioPipelinesConfig.jl")
-if isfile(personal_config)
-    try
-        include(personal_config)
-    catch
-        error("Loading personal configuration file failed: $personal_config")
-        rethrow()
+function update_config(config_file)
+    if isfile(config_file)
+        try
+            @eval Config include($config_file)
+        catch
+            error("Loading configuration file failed: $config_file")
+            rethrow()
+        end
     end
 end
+
+update_config(joinpath(@__DIR__, "config.secret.jl"))
+update_config(joinpath(homedir(), ".BioPipelinesConfig.jl"))
 
 SCRIPTS_DIR = abspath(@__DIR__, "..", "scripts")
 SCRIPTS = Dict{String, String}(
     [(replace(s, r"\.jl$" => ""), joinpath(SCRIPTS_DIR, s)) for s in readdir(SCRIPTS_DIR)]
 )
+
+
+
 end
