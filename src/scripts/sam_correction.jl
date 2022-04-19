@@ -9,20 +9,15 @@ if "-h" in ARGS || "--help" in ARGS || length(ARGS) > 2
         $(@__FILE__) SAM_FILE [SAM_OUT]
         script_to_out_sam | $(@__FILE__) | samtools view -b -o BAM_FILE
 
-    Check whether sam files are good. Invalid records are removed. Compressed not supported.
+    Check whether sam files are good. Invalid records are removed. Compression is not supported.
     """)
     exit()
 end
 
 
-function sam_validation(sam; out::IO=stdout)
+function sam_validation(sam::IO; out::IO=stdout)
     @info "Sam Validation Start: $sam"
-    if sam isa AbstractString
-        io = open(sam, "r")
-    elseif sam isa IO
-        io = sam
-    end
-
+    
     line_num = 0
     while !eof(io)
         line = readline(io)
@@ -48,6 +43,11 @@ function sam_validation(sam; out::IO=stdout)
     end
     @info "Sam Validation Passed ($(line_num) lines): $sam"
 end
+function sam_validation(sam::AbstractString; out::IO=stdout)
+    io = open(sam, "r")
+    sam_validation(io; out=out)
+end
+
 
 if length(ARGS) == 0
     sam_validation(stdin)

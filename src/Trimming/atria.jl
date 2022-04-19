@@ -4,6 +4,50 @@ dep_atria = CmdDependency(
     validate_stdout = x -> occursin(r"v\d+\.\d+\.\d+", x)
 )
 
+function infer_atria_outputs(in::Dict)
+    file1 = in["READ1"]
+    outdir = in["OUTPUT-DIR"]
+    compress = in["COMPRESS"]
+    if haskey(in, "READ2")
+        file2 = in["READ2"]
+        return Dict(
+            "OUTPUT-R1" => infer_atria_outputs(file1, outdir, compress),
+            "OUTPUT-R2" => infer_atria_outputs(file2, outdir, compress)
+        )
+    else
+        return Dict(
+            "OUTPUT-R1" => infer_atria_outputs(file1, outdir, compress)
+        )
+    end
+end
+
+function infer_atria_outputs(file1::String, outdir::String, compress::String)
+    isingzip = occursin(r"\.gz$"i, file1)
+    isinbzip2 = occursin(r"\.bz2$"i, file1)
+    outcompress = uppercase(compress)
+    if outcompress == "AUTO"
+        if isingzip
+            outcompress = "GZIP"
+        elseif isinbzip2
+            outcompress = "BZIP2"
+        else
+            outcompress = "NO"
+        end
+    elseif outcompress == "GZ"
+        outcompress = "GZIP"
+    elseif outcompress == "BZ2"
+        outcompress = "BZIP2"
+    end
+    outfile1 = joinpath(outdir, replace(basename(file1), r"(fastq$|fq$|[^.]*)(\.gz|\.bz2)?$"i => s"atria.\1", count=1))
+
+    if outcompress == "GZIP"
+        outfile1 *= ".gz"
+    elseif outcompress == "BZIP2"
+        outfile1 *= ".bz2"
+    end
+    outfile1
+end
+
 prog_atria = CmdProgram(
     name             = "Atria Trimming (Paired-end)",
     id_file          = "trimming.atria-pe",
@@ -56,47 +100,3 @@ prog_atria_se = CmdProgram(
     validate_outputs = do_nothing,
     wrap_up          = do_nothing
 )
-
-function infer_atria_outputs(in::Dict)
-    file1 = in["READ1"]
-    outdir = in["OUTPUT-DIR"]
-    compress = in["COMPRESS"]
-    if haskey(in, "READ2")
-        file2 = in["READ2"]
-        return Dict(
-            "OUTPUT-R1" => infer_atria_outputs(file1, outdir, compress),
-            "OUTPUT-R2" => infer_atria_outputs(file2, outdir, compress)
-        )
-    else
-        return Dict(
-            "OUTPUT-R1" => infer_atria_outputs(file1, outdir, compress)
-        )
-    end
-end
-
-function infer_atria_outputs(file1::String, outdir::String, compress::String)
-    isingzip = occursin(r"\.gz$"i, file1)
-    isinbzip2 = occursin(r"\.bz2$"i, file1)
-    outcompress = uppercase(compress)
-    if outcompress == "AUTO"
-        if isingzip
-            outcompress = "GZIP"
-        elseif isinbzip2
-            outcompress = "BZIP2"
-        else
-            outcompress = "NO"
-        end
-    elseif outcompress == "GZ"
-        outcompress = "GZIP"
-    elseif outcompress == "BZ2"
-        outcompress = "BZIP2"
-    end
-    outfile1 = joinpath(outdir, replace(basename(file1), r"(fastq$|fq$|[^.]*)(\.gz|\.bz2)?$"i => s"atria.\1", count=1))
-
-    if outcompress == "GZIP"
-        outfile1 *= ".gz"
-    elseif outcompress == "BZIP2"
-        outfile1 *= ".bz2"
-    end
-    outfile1
-end
