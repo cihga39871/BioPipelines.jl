@@ -9,6 +9,9 @@ export get_config, update_config
 include(joinpath("Common", "Common.jl"))
 @reexport using .Common
 
+include(joinpath("QC", "QC.jl"))
+@reexport using .QC
+
 include(joinpath("Trimming", "Trimming.jl"))
 @reexport using .Trimming
 
