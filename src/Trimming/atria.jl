@@ -1,5 +1,5 @@
 dep_atria = CmdDependency(
-    exec = `$(Config.path_to_atria)`,
+    exec = `$(Config.path_atria)`,
     test_args = `--version`,
     validate_stdout = x -> occursin(r"v\d+\.\d+\.\d+", x)
 )
@@ -60,7 +60,7 @@ prog_atria = CmdProgram(
         "OUTPUT-DIR" => String => ".",
         "THREADS" => Int => 8,
         "COMPRESS" => String => "AUTO",
-        "OTHER-ARGS" => Cmd => Config.args_to_atria
+        "OTHER-ARGS" => Cmd => Config.args_atria
     ],
     validate_inputs  = do_nothing,
     prerequisites    = do_nothing,
@@ -87,7 +87,7 @@ prog_atria_se = CmdProgram(
         "OUTPUT-DIR" => String => ".",
         "THREADS" => Int => 8,
         "COMPRESS" => String => "AUTO",
-        "OTHER-ARGS" => Cmd => Config.args_to_atria
+        "OTHER-ARGS" => Cmd => Config.args_atria
     ],
     validate_inputs  = do_nothing,
     prerequisites    = do_nothing,

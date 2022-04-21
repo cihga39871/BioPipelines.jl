@@ -1,10 +1,10 @@
 dep_velveth = CmdDependency(
-    exec = `$(Config.path_to_velveth)`,
+    exec = `$(Config.path_velveth)`,
     test_args = ``,
     validate_stdout = x -> occursin("Version ", x)
 )
 dep_velvetg = CmdDependency(
-    exec = `$(Config.path_to_velvetg)`,
+    exec = `$(Config.path_velvetg)`,
     test_args = ``,
     validate_stdout = x -> occursin("Version ", x)
 )
@@ -19,8 +19,8 @@ prog_velvet = JuliaProgram(
         "READ2" => Union{String, Cmd} => ``,
         "THREADS" => Int => 8,
         "THREADS-SAMTOOLS" => Int => 4,
-        "OTHER-ARGS-VELVETH" => Cmd => Config.args_to_velveth,
-        "OTHER-ARGS-VELVETG" => Cmd => Config.args_to_velvetg
+        "OTHER-ARGS-VELVETH" => Cmd => Config.args_velveth,
+        "OTHER-ARGS-VELVETG" => Cmd => Config.args_velvetg
     ],
     validate_inputs  = i -> begin
         check_dependency_file(i["READ1"]) &&

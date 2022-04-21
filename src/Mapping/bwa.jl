@@ -1,5 +1,5 @@
 dep_bwa = CmdDependency(
-    exec = `$(Config.path_to_bwa)`,
+    exec = `$(Config.path_bwa)`,
     test_args = `mem`,
     validate_stderr = x -> occursin("bwa", x)
 )
@@ -14,7 +14,7 @@ prog_bwa = CmdProgram(
         "READ2" => Union{String, Cmd} => ``,
         "THREADS" => Int => 8,
         "THREADS-SAMTOOLS" => Int => 4,
-        "OTHER-ARGS" => Cmd => Config.args_to_bwa
+        "OTHER-ARGS" => Cmd => Config.args_bwa
     ],
     validate_inputs  = i -> begin
         check_dependency_file(i["READ1"]) &&
@@ -67,7 +67,7 @@ function bwa_index(bwa_reference::String; bwa=dep_bwa)::String
     if !isfile(bwa_reference)
         error("bwa_index(): file not exist: $bwa_reference")
     end
-    
+
     # lock to prevent doing multiple index at the same time
     index_lock = bwa_reference * ".bwa_index_lock"
     touch(index_lock)

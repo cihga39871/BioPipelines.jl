@@ -1,5 +1,5 @@
 dep_bwa_mem2 = CmdDependency(
-    exec = `$(Config.path_to_bwa_mem2)`,
+    exec = `$(Config.path_bwa_mem2)`,
     test_args = `mem`,
     validate_stderr = x -> occursin("bwa", x)
 )
@@ -62,7 +62,7 @@ prog_bwa_mem2 = CmdProgram(
         "READ2" => Union{String, Cmd} => ``,
         "THREADS" => Int => 8,
         "THREADS-SAMTOOLS" => Int => 4,
-        "OTHER-ARGS" => Cmd => Config.args_to_bwa_mem2
+        "OTHER-ARGS" => Cmd => Config.args_bwa_mem2
     ],
     validate_inputs  = i -> begin
         check_dependency_file(i["READ1"]) &&

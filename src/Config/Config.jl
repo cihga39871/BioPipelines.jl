@@ -15,44 +15,51 @@ isfile(joinpath(@__DIR__, "config.secret.jl")) || touch(joinpath(@__DIR__, "conf
 ## Dependencies
 
 # Common
-path_to_samtools = "samtools"
+path_samtools = "samtools"
+
+# QC
+path_fastqc = "fastqc"
+path_multiqc = "multiqc"
 
 # Trimming
-path_to_atria = "atria"
-args_to_atria = `--check-identifier --polyG`
+path_atria = "atria"
+args_atria = `--check-identifier --polyG`
 
 # Mapping
-path_to_bwa = "bwa"
-args_to_bwa = ``
+path_bwa = "bwa"
+args_bwa = ``
 
-path_to_bwa_mem2 = "bwa-mem2"
-args_to_bwa_mem2 = ``
+path_bwa_mem2 = "bwa-mem2"
+args_bwa_mem2 = ``
 
 # Assembly
-path_to_velveth = "velveth"
-path_to_velvetg = "velvetg"
-path_to_velvet_optimizer = "VelvetOptimiser.pl"
-args_to_velveth = ``
-args_to_velvetg = ``
-args_to_velvet_optimizer = ``
+path_velveth = "velveth"
+path_velvetg = "velvetg"
+path_velvet_optimizer = "VelvetOptimiser.pl"
+args_velveth = ``
+args_velvetg = ``
+args_velvet_optimizer = ``
 
 # Accession to Taxonomy database; a file ending with sql (taxonomizr)
-path_to_taxonomizr_db = abspath(@__DIR__, "..", "..", "db", "taxonomizr", "accessionTaxa.sql")
+path_taxonomizr_db = abspath(@__DIR__, "..", "..", "db", "taxonomizr", "accessionTaxa.sql")
 
 ## The previous settings will be override by the secret configure file
-function update_config(config_file)
+function update_config(config_file; verbose::Bool = true)
     if isfile(config_file)
         try
             @eval Config include($config_file)
+            verbose && (@info "BioPipelines: Loading configuration: $config_file")
         catch
-            error("Loading configuration file failed: $config_file")
+            error("BioPipelines: Loading configuration failed: $config_file")
             rethrow()
         end
+    elseif verbose
+        error("BioPipelines: Loading configuration failed: file not exist: $config_file")
     end
 end
 
-update_config(joinpath(@__DIR__, "config.secret.jl"))
-update_config(joinpath(homedir(), ".BioPipelinesConfig.jl"))
+update_config(joinpath(@__DIR__, "config.secret.jl"); verbose = false)
+update_config(joinpath(homedir(), ".BioPipelinesConfig.jl"); verbose = false)
 
 SCRIPTS_DIR = abspath(@__DIR__, "..", "scripts")
 SCRIPTS = Dict{String, String}(

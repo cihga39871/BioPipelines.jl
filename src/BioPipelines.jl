@@ -3,7 +3,7 @@ module BioPipelines
 using Reexport
 
 include(joinpath("Config", "Config.jl"))
-@reexport using .Config
+using .Config
 
 include(joinpath("Common", "Common.jl"))
 @reexport using .Common
