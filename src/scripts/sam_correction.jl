@@ -15,9 +15,9 @@ if "-h" in ARGS || "--help" in ARGS || length(ARGS) > 2
 end
 
 
-function sam_validation(sam::IO; out::IO=stdout)
-    @info "Sam Validation Start: $sam"
-    
+function sam_validation(io::IO; out::IO=stdout)
+    @info "Sam Validation Start: $io"
+
     line_num = 0
     while !eof(io)
         line = readline(io)
