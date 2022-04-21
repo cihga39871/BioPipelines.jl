@@ -44,7 +44,7 @@ args_velvet_optimizer = ``
 path_taxonomizr_db = abspath(@__DIR__, "..", "..", "db", "taxonomizr", "accessionTaxa.sql")
 
 ## The previous settings will be override by the secret configure file
-function update_config(config_file; verbose::Bool = true)
+function update_config(config_file::AbstractString; verbose::Bool = true)
     if isfile(config_file)
         try
             @eval Config include($config_file)
@@ -63,7 +63,7 @@ end
 
 Get `var`iable defined in BioPipelines.Config module. If `var` is not defined, return `default`.
 """
-function get_config(var::Symbol, default=nothing)
+@noinline @nospecialize function get_config(var::Symbol, default=nothing)
     if isdefined(Config, :var)
         getfield(Config, var)
     else
