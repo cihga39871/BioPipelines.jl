@@ -4,7 +4,7 @@ using Reexport
 
 include(joinpath("Config", "Config.jl"))
 using .Config
-export Config.get_config
+export get_config, update_config
 
 include(joinpath("Common", "Common.jl"))
 @reexport using .Common
