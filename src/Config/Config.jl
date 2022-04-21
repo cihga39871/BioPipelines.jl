@@ -63,7 +63,7 @@ end
 
 Get `var`iable defined in BioPipelines.Config module. If `var` is not defined, return `default`.
 """
-@noinline @nospecialize function get_config(var::Symbol, default=nothing)
+@noinline function get_config(var::Symbol, default=nothing)
     if isdefined(Config, :var)
         getfield(Config, var)
     else
