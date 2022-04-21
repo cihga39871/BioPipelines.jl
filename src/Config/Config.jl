@@ -8,7 +8,7 @@ In addition, you can also create a config file named `.BioPipelinesConfig.jl` in
 """
 module Config
 
-export update_config
+export update_config, get_config
 
 isfile(joinpath(@__DIR__, "config.secret.jl")) || touch(joinpath(@__DIR__, "config.secret.jl"))
 
@@ -55,6 +55,19 @@ function update_config(config_file; verbose::Bool = true)
         end
     elseif verbose
         error("BioPipelines: Loading configuration failed: file not exist: $config_file")
+    end
+end
+
+"""
+    get_config(var::Symbol, default=nothing)
+
+Get `var`iable defined in BioPipelines.Config module. If `var` is not defined, return `default`.
+"""
+function get_config(var::Symbol, default=nothing)
+    if isdefined(Config, :var)
+        getfield(Config, var)
+    else
+        default
     end
 end
 
