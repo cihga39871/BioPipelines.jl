@@ -9,4 +9,7 @@ export dep_julia
 include("samtools.jl")
 export dep_samtools
 
+include("bam_filter.jl")
+export prog_bam_filter
+
 end
