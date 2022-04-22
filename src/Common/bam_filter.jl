@@ -1,10 +1,4 @@
 
-filtering_cmd = pipeline(
-    `$dep_samtools view -h $bam`,
-    `$dep_julia $(Config.SCRIPTS["bam_filter"]) $args_bam_filter`,
-    `$dep_samtools view -b -o $bam_filter`
-)
-
 prog_bam_filter = CmdProgram(
     name             = "BAM Filtering",
     id_file          = ".common.bam_filter",
@@ -17,8 +11,8 @@ prog_bam_filter = CmdProgram(
     outputs          = ["FILTERED-BAM" => String],
     infer_outputs    = i -> Dict("FILTERED-BAM" => replaceext(i["BAM"], "filter.bam")),
     cmd              = pipeline(
-        `$dep_samtools view -h $bam`,
+        `$dep_samtools view -h BAM`,
         `$dep_julia $(Config.SCRIPTS["bam_filter"]) $args_bam_filter`,
-        `$dep_samtools view -b -o $bam_filter`
+        `$dep_samtools view -b -o FILTERED-BAM`
     )
 )
