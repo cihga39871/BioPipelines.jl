@@ -30,18 +30,18 @@ function sam_validation(io::IO; out::IO=stdout)
 
         splitted = split(line, '\t')
         if length(splitted) < 11
-            @error("Error in line $line_num of file $sam: column < 11:\n$line")
+            @error("Error in line $line_num of file $io: column < 11:\n$line")
             continue
         end
 
         if length(splitted[10]) != length(splitted[11])
-            @error("Error in line $line_num of file $sam: SEQ and QUAL of different length:\n$line")
+            @error("Error in line $line_num of file $io: SEQ and QUAL of different length:\n$line")
             continue
         end
 
         println(out, line)
     end
-    @info "Sam Validation Passed ($(line_num) lines): $sam"
+    @info "Sam Validation Passed ($(line_num) lines): $io"
 end
 function sam_validation(sam::AbstractString; out::IO=stdout)
     io = open(sam, "r")
