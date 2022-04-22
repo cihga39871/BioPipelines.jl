@@ -6,7 +6,7 @@ dep_multiqc = CmdDependency(
 
 prog_multiqc = CmdProgram(
     name             = "MultiQC",
-    id_file          = "qc.multiqc",
+    id_file          = ".qc.multiqc",
     cmd_dependencies = [dep_multiqc],
     inputs           = [
         "ANALYSIS_DIR" => String => ".",

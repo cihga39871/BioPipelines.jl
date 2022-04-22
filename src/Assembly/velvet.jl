@@ -11,7 +11,7 @@ dep_velvetg = CmdDependency(
 #TODO
 prog_velvet = JuliaProgram(
     name             = "Velvet Assembly",
-    id_file          = "assembly.velvet",
+    id_file          = ".assembly.velvet",
     cmd_dependencies = [dep_velveth, dep_velvetg],
     inputs           = [
         "INDEX" => String,

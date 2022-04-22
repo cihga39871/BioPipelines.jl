@@ -6,7 +6,7 @@ dep_bwa = CmdDependency(
 
 prog_bwa = CmdProgram(
     name             = "BWA Mapping",
-    id_file          = "mapping.bwa",
+    id_file          = ".mapping.bwa",
     cmd_dependencies = [dep_bwa, dep_samtools],
     inputs           = [
         "INDEX" => String,

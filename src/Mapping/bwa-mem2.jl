@@ -54,7 +54,7 @@ end
 
 prog_bwa_mem2 = CmdProgram(
     name             = "BWA-MEM2 Mapping",
-    id_file          = "mapping.bwa-mem2",
+    id_file          = ".mapping.bwa-mem2",
     cmd_dependencies = [dep_bwa_mem2, dep_samtools],
     inputs           = [
         "INDEX" => String,

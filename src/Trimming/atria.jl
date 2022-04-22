@@ -50,7 +50,7 @@ end
 
 prog_atria = CmdProgram(
     name             = "Atria Trimming (Paired-end)",
-    id_file          = "trimming.atria-pe",
+    id_file          = ".trimming.atria-pe",
     cmd_dependencies = [dep_atria],
     inputs           = [
         "READ1" => String,
@@ -79,7 +79,7 @@ prog_atria_pe = prog_atria
 
 prog_atria_se = CmdProgram(
     name             = "Atria Trimming (Single-end)",
-    id_file          = "trimming.atria-se",
+    id_file          = ".trimming.atria-se",
     cmd_dependencies = [dep_atria],
     inputs           = [
         "READ1" => String,

@@ -6,7 +6,7 @@ dep_fastqc = CmdDependency(
 
 prog_fastqc = CmdProgram(
     name             = "FastQC",
-    id_file          = "qc.fastqc",
+    id_file          = ".qc.fastqc",
     cmd_dependencies = [dep_fastqc],
     inputs           = [
         "FILE" => String,
