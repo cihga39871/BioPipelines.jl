@@ -6,6 +6,9 @@ using ..Config
 include("julia.jl")
 export dep_julia, prog_julia
 
+include("cmd.jl")
+export prog_cmd
+
 include("samtools.jl")
 export dep_samtools, prog_samtools
 
