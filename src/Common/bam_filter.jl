@@ -12,7 +12,7 @@ prog_bam_filter = CmdProgram(
     infer_outputs    = i -> Dict("FILTERED-BAM" => replaceext(i["BAM"], "filter.bam")),
     cmd              = pipeline(
         `$dep_samtools view -h BAM`,
-        `$dep_julia $(Config.SCRIPTS["bam_filter"]) $args_bam_filter`,
+        `$dep_julia $(Config.SCRIPTS["bam_filter"]) ARGS`,
         `$dep_samtools view -b -o FILTERED-BAM`
     )
 )
