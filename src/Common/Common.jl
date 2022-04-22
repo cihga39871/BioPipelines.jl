@@ -12,4 +12,7 @@ export dep_samtools, prog_samtools
 include("bam_filter.jl")
 export prog_bam_filter
 
+include("blast.jl")
+export dep_blastn, prog_blastn
+
 end
