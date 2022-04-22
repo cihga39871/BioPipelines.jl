@@ -13,6 +13,7 @@ include("bam_filter.jl")
 export prog_bam_filter
 
 include("blast.jl")
-export dep_blastn, prog_blastn
+export dep_blastn, prog_blastn,
+dep_makeblastdb, prog_makeblastdb
 
 end

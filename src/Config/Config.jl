@@ -17,6 +17,7 @@ isfile(joinpath(@__DIR__, "config.secret.jl")) || touch(joinpath(@__DIR__, "conf
 # Common
 path_samtools = "samtools"
 path_blastn = "blastn"
+path_makeblastdb = "makeblastdb"
 
 # QC
 path_fastqc = "fastqc"
