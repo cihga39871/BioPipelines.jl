@@ -14,7 +14,7 @@ path_taxonomizr_dir = dirname(path_taxonomizr_db)
 
 mkpath(path_taxonomizr_dir); mode=0o755)
 
-@info "Preparing Taxonomizr Database: This is a big (several gigabytes) download and process. Please be patient and use a fast connection."
+@info "Preparing Taxonomizr Database: It will download 6 GB data from NCBI and processed to a 65 GB database. Please be patient and use a fast connection. Files will be downloaded to $path_taxonomizr_dir. To change the path of the database file, please exit the program and add `path_taxonomizr_db = \"/path/to/accessionTaxa.sql\"` in the Config file: $(joinpath(homedir(), ".BioPipelinesConfig.jl"))"
 
 R"""
 if (is.na(packageDescription("taxonomizr")[1])) install.packages("taxonomizr")
