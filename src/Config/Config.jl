@@ -43,7 +43,7 @@ args_velvetg = ``
 args_velvet_optimizer = ``
 
 # Accession to Taxonomy database; a file ending with sql (taxonomizr)
-path_taxonomizr_db = abspath(@__DIR__, "..", "..", "db", "taxonomizr", "accessionTaxa.sql")
+path_taxonomizr_db = abspath(homedir(), ".BioPipelines", "db", "taxonomizr", "accessionTaxa.sql")
 
 ## The previous settings will be override by the secret configure file
 function update_config(config_file::AbstractString; verbose::Bool = true)
