@@ -37,6 +37,7 @@ prog_velvet = JuliaProgram(
             end
             cp(default_fasta, fasta; force=true)
         end
+        return o
     end,
     infer_outputs    = do_nothing,
     outputs          = [
