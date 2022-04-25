@@ -19,4 +19,7 @@ include("blast.jl")
 export dep_blastn, prog_blastn,
 dep_makeblastdb, prog_makeblastdb
 
+include("taxonomizr.jl")
+export check_accession2taxonomy_db
+
 end
