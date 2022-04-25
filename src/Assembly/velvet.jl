@@ -8,36 +8,42 @@ dep_velvetg = CmdDependency(
     test_args = ``,
     validate_stdout = x -> occursin("Version ", x)
 )
-#TODO
 prog_velvet = JuliaProgram(
     name             = "Velvet Assembly",
     id_file          = ".assembly.velvet",
     cmd_dependencies = [dep_velveth, dep_velvetg],
     inputs           = [
-        "INDEX" => String,
-        "READ1" => String,
-        "READ2" => Union{String, Cmd} => ``,
-        "THREADS" => Int => 8,
-        "THREADS-SAMTOOLS" => Int => 4,
-        "OTHER-ARGS-VELVETH" => Cmd => Config.args_velveth,
-        "OTHER-ARGS-VELVETG" => Cmd => Config.args_velvetg
+        "OUTDIR" => String,
+        "HASH-LENGTH" => Int => 31,
+        "ARGS-VELVETH" => Cmd => Config.args_velveth,
+        "ARGS-VELVETG" => Cmd => Config.args_velvetg
     ],
-    validate_inputs  = i -> begin
-        check_dependency_file(i["READ1"]) &&
-        (isempty(i["READ2"]) || check_dependency_file(i["READ2"]))
-    end,
+    validate_inputs  = do_nothing,
     prerequisites    = (i,o) -> begin
-        #TODO
+        mkpath(i["OUTDIR"], mode=0o755)
     end,
     main             = (i,o) -> begin
-        #TODO
+        outdir = i["OUTDIR"]
+        hash_length = i["HASH-LENGTH"]
+        args_velveth = i["ARGS-VELVETH"]
+        args_velvetg = i["ARGS-VELVETG"]
+        run(`$dep_velveth $outdir $hash_length $args_velveth`)
+        run(`$dep_velvetg $outdir $args_velvetg`)
+        fasta = abspath(o["FASTA"])
+        default_fasta = abspath(outdir, "contigs.fa")
+        if fasta != default_fasta
+            if !isfile(default_fasta)
+                error("Velvet Assembly Failed: no contigs.fa under $outdir")
+            end
+            cp(default_fasta, fasta; force=true)
+        end
     end,
     infer_outputs    = do_nothing,
     outputs          = [
-        "FASTA" => String => "<READ1>.fa"
+        "FASTA" => String => "<OUTDIR>/contigs.fa"
     ],
     validate_outputs = o -> begin
-        isfile(o["BAM"])
+        isfile(o["FASTA"])
     end,
     wrap_up          = do_nothing
 )
