@@ -76,11 +76,14 @@ end
 update_config(joinpath(@__DIR__, "config.secret.jl"); verbose = false)
 update_config(joinpath(homedir(), ".BioPipelinesConfig.jl"); verbose = false)
 
-SCRIPTS_DIR = abspath(@__DIR__, "..", "scripts")
-SCRIPTS = Dict{String, String}(
-    [(replace(s, r"\.jl$" => ""), joinpath(SCRIPTS_DIR, s)) for s in readdir(SCRIPTS_DIR)]
-)
+local SCRIPTS
 
-
+function update_scripts(SCRIPTS_DIR = abspath(@__DIR__, "..", "scripts"))
+    global SCRIPTS
+    SCRIPTS = Dict{String, String}(
+        [(replace(s, r"\.jl$" => ""), joinpath(SCRIPTS_DIR, s)) for s in readdir(SCRIPTS_DIR)]
+    )
+end
+update_scripts()
 
 end
