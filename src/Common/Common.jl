@@ -2,6 +2,7 @@ module Common
 
 using Pipelines
 using ..Config
+using Rcall
 
 include("julia.jl")
 export dep_julia, prog_julia
@@ -20,6 +21,6 @@ export dep_blastn, prog_blastn,
 dep_makeblastdb, prog_makeblastdb
 
 include("taxonomizr.jl")
-export check_accession2taxonomy_db
+export check_accession2taxonomy_db, prepare_taxonomizr_db
 
 end

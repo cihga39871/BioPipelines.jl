@@ -1,5 +1,10 @@
 
 # Reference: https://samtools.github.io/hts-specs/SAMv1.pdf
+using Pkg
+installed_pkgs = Set([p.name for p in values(Pkg.dependencies())])
+for pkg in ["ArgParse"]
+    pkg in installed_pkgs || Pkg.add(pkg)
+end
 
 using ArgParse
 
