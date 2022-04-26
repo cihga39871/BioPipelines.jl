@@ -2,15 +2,11 @@
 """
 The Config module stores the paths and arguments of commandline.
 
-If you want to change variables in this file, please change it in `config.secret.jl`. Any changes to `Config.jl` file might be recorded to Github, while `config.secret.jl` will not save to Github.
-
-In addition, you can also create a config file named `.BioPipelinesConfig.jl` in your home directory.
+If you want to change variables in this file, please create a config file named `.BioPipelines/config.jl` in your home directory.
 """
 module Config
 
 export update_config, get_config
-
-isfile(joinpath(@__DIR__, "config.secret.jl")) || touch(joinpath(@__DIR__, "config.secret.jl"))
 
 ## Dependencies
 
@@ -73,8 +69,7 @@ Get `var`iable defined in BioPipelines.Config module. If `var` is not defined, r
     end
 end
 
-update_config(joinpath(@__DIR__, "config.secret.jl"); verbose = false)
-update_config(joinpath(homedir(), ".BioPipelinesConfig.jl"); verbose = false)
+update_config(joinpath(homedir(), ".BioPipelines", "config.jl"); verbose = false)
 
 local SCRIPTS
 
