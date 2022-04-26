@@ -1,14 +1,14 @@
-dep_velveth = CmdDependency(
+_dep_velveth() = CmdDependency(
     exec = `$(Config.path_velveth)`,
     test_args = ``,
     validate_stdout = x -> occursin("Version ", x)
 )
-dep_velvetg = CmdDependency(
+_dep_velvetg() = CmdDependency(
     exec = `$(Config.path_velvetg)`,
     test_args = ``,
     validate_stdout = x -> occursin("Version ", x)
 )
-prog_velvet = JuliaProgram(
+_prog_velvet() = JuliaProgram(
     name             = "Velvet Assembly",
     id_file          = ".assembly.velvet",
     cmd_dependencies = [dep_velveth, dep_velvetg],

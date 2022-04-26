@@ -41,7 +41,34 @@ args_velvet_optimizer = ``
 # Accession to Taxonomy database; a file ending with sql (taxonomizr)
 path_taxonomizr_db = abspath(homedir(), ".BioPipelines", "db", "taxonomizr", "accessionTaxa.sql")
 
-## The previous settings will be override by the secret configure file
+## The previous settings will be override by configure files
+
+"""
+    update_dep_and_prog()
+
+The function will evaluate `dep_xxx = _dep_xxx()` and `prog_xxx = _prog_xxx()` under the submodules of BioPipelines. Please use it after all submodules are loaded.
+
+Caution: No need to call it manually. If you use `update_config(config_file)`, the dependencies and programs are automatically updated if the config are refreshed.
+"""
+function update_dep_and_prog()
+    pm = parentmodule(@__MODULE__)
+    # find modules
+    pm_mod_names = filter!(x -> isdefined(pm, x) && getfield(pm, x) isa Module && (getfield(pm, x) !== @__MODULE__) && (getfield(pm, x) !== pm), names(pm))
+    pm_mods = [getfield(pm, x) for x in pm_mod_names]
+
+    for pm_mod in pm_mods
+        # find programs named with _dep_* or _prog_*
+        funs = filter!(names(pm_mod, all=true)) do x
+            occursin(r"^_(dep|prog)_", string(x)) && getfield(pm_mod, x) isa Function
+        end
+        for fun in funs
+            dep_or_prog = Symbol(string(fun)[2:end])
+            @eval pm_mod $(dep_or_prog) = $(getfield(pm_mod, fun))()
+        end
+    end
+end
+
+
 function update_config(config_file::AbstractString; verbose::Bool = true)
     if isfile(config_file)
         try
@@ -51,6 +78,8 @@ function update_config(config_file::AbstractString; verbose::Bool = true)
             error("BioPipelines: Loading configuration failed: $config_file")
             rethrow()
         end
+        # update dep and programs
+        update_dep_and_prog()
     elseif verbose
         error("BioPipelines: Loading configuration failed: file not exist: $config_file")
     end
@@ -69,7 +98,6 @@ Get `var`iable defined in BioPipelines.Config module. If `var` is not defined, r
     end
 end
 
-update_config(joinpath(homedir(), ".BioPipelines", "config.jl"); verbose = false)
 
 local SCRIPTS
 
@@ -79,6 +107,7 @@ function update_scripts(SCRIPTS_DIR = abspath(@__DIR__, "..", "scripts"))
         [(replace(s, r"\.jl$" => ""), joinpath(SCRIPTS_DIR, s)) for s in readdir(SCRIPTS_DIR)]
     )
 end
+
 update_scripts()
 
 end

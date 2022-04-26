@@ -1,10 +1,10 @@
-dep_fastqc = CmdDependency(
+_dep_fastqc() = CmdDependency(
     exec = `$(Config.path_fastqc)`,
     test_args = `--version`,
     validate_stdout = x -> occursin("FastQC", x)
 )
 
-prog_fastqc = CmdProgram(
+_prog_fastqc() = CmdProgram(
     name             = "FastQC",
     id_file          = ".qc.fastqc",
     cmd_dependencies = [dep_fastqc],

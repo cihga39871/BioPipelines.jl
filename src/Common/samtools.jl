@@ -1,10 +1,10 @@
-dep_samtools = CmdDependency(
+_dep_samtools() = CmdDependency(
     exec = `$(Config.path_samtools)`,
     test_args = `--version`,
     validate_stdout = x -> occursin(r"samtools \d", x)
 )
 
-prog_samtools = CmdProgram(
+_prog_samtools() = CmdProgram(
     name             = "Samtools",
     id_file          = ".common.samtools",
     cmd_dependencies = [dep_samtools],

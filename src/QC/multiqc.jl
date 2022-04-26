@@ -1,10 +1,10 @@
-dep_multiqc = CmdDependency(
+_dep_multiqc() = CmdDependency(
     exec = `$(Config.path_multiqc)`,
     test_args = `--version`,
     validate_stdout = x -> occursin("multiqc", x)
 )
 
-prog_multiqc = CmdProgram(
+_prog_multiqc() = CmdProgram(
     name             = "MultiQC",
     id_file          = ".qc.multiqc",
     cmd_dependencies = [dep_multiqc],

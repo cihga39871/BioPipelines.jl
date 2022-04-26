@@ -1,4 +1,4 @@
-dep_bwa_mem2 = CmdDependency(
+_dep_bwa_mem2() = CmdDependency(
     exec = `$(Config.path_bwa_mem2)`,
     test_args = `mem`,
     validate_stderr = x -> occursin("bwa", x)
@@ -52,7 +52,7 @@ function bwa_mem2_index(bwa_reference::String; bwa=dep_bwa_mem2)::String
     return bwa_reference
 end
 
-prog_bwa_mem2 = CmdProgram(
+_prog_bwa_mem2() = CmdProgram(
     name             = "BWA-MEM2 Mapping",
     id_file          = ".mapping.bwa-mem2",
     cmd_dependencies = [dep_bwa_mem2, dep_samtools],
@@ -69,7 +69,7 @@ prog_bwa_mem2 = CmdProgram(
         (isempty(i["READ2"]) || check_dependency_file(i["READ2"]))
     end,
     prerequisites    = (i,o) -> begin
-        bwa_mem2_index(i["INDEX"])
+        bwa_mem2_index(i["INDEX"], bwa=dep_bwa_mem2)
     end,
     cmd              = pipeline(
         `$dep_bwa_mem2 mem -t THREADS OTHER-ARGS INDEX READ1 READ2`,

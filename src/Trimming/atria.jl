@@ -1,4 +1,4 @@
-dep_atria = CmdDependency(
+_dep_atria() = CmdDependency(
     exec = `$(Config.path_atria)`,
     test_args = `--version`,
     validate_stdout = x -> occursin(r"v\d+\.\d+\.\d+", x)
@@ -48,7 +48,7 @@ function infer_atria_outputs(file1::String, outdir::String, compress::String)
     outfile1
 end
 
-prog_atria = CmdProgram(
+_prog_atria() = CmdProgram(
     name             = "Atria Trimming (Paired-end)",
     id_file          = ".trimming.atria-pe",
     cmd_dependencies = [dep_atria],
@@ -75,9 +75,9 @@ prog_atria = CmdProgram(
     end,
     wrap_up          = do_nothing
 )
-prog_atria_pe = prog_atria
+_prog_atria_pe = _prog_atria
 
-prog_atria_se = CmdProgram(
+_prog_atria_se() = CmdProgram(
     name             = "Atria Trimming (Single-end)",
     id_file          = ".trimming.atria-se",
     cmd_dependencies = [dep_atria],

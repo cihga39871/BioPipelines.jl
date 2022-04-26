@@ -1,5 +1,5 @@
 
-prog_bam_filter = CmdProgram(
+_prog_bam_filter() = CmdProgram(
     name             = "BAM Filtering",
     id_file          = ".common.bam_filter",
     cmd_dependencies = [dep_julia, dep_samtools],

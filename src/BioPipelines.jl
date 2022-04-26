@@ -21,4 +21,8 @@ include(joinpath("Mapping", "Mapping.jl"))
 include(joinpath("Assembly", "Assembly.jl"))
 @reexport using .Assembly
 
+# updating after all modules are loaded
+Config.update_dep_and_prog()
+Config.update_config(joinpath(homedir(), ".BioPipelines", "config.jl"); verbose = false)
+
 end

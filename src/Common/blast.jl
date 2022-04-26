@@ -1,10 +1,10 @@
-dep_blastn = CmdDependency(
+_dep_blastn() = CmdDependency(
     exec = `$(Config.path_blastn)`,
     test_args = `-h`,
     validate_stdout = x -> occursin(r"Nucleotide-Nucleotide BLAST", x)
 )
 
-prog_blastn = CmdProgram(
+_prog_blastn() = CmdProgram(
     name             = "BLASTn",
     id_file          = ".common.blastn",
     cmd_dependencies = [dep_blastn],
@@ -12,13 +12,13 @@ prog_blastn = CmdProgram(
     cmd              = `$dep_blastn ARGS`
 )
 
-dep_makeblastdb = CmdDependency(
+_dep_makeblastdb() = CmdDependency(
     exec = `$(Config.path_makeblastdb)`,
     test_args = `-h`,
     validate_stdout = x -> occursin(r"Application to create BLAST databases", x)
 )
 
-prog_makeblastdb = CmdProgram(
+_prog_makeblastdb() = CmdProgram(
     name             = "Make BLAST Database",
     id_file          = ".common.makeblastdb",
     cmd_dependencies = [dep_makeblastdb],
