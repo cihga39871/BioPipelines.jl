@@ -16,8 +16,13 @@ function parsing_args(args)
             help = "output filtererd fasta"
             default = stdout
         "-N", "--qname-file"
-            help = "Only include in output sequences that whose read name is listed in FILE"
+            help = "Only include in output sequences that whose read name is listed in FILE (incompatible with --qname)"
             arg_type = String
+            default = ""
+        "-n", "--qname"
+            help = "Only include in output sequences that whose read name is listed in the argument (incompatible with --qname-file)"
+            arg_type = String
+            nargs = '*'
         "-O", "--not-ordered"
             help = "the qnames of fasta and file are not in the same order"
             action = :store_true
@@ -30,12 +35,31 @@ end
 args = parsing_args(ARGS)
 
 qname_file = args["qname-file"]
-isfile(qname_file) || error("File not found: --qname-file $(qname_file)")
+qnames = args["qname"]
+if qname_file == ""
+    if length(qnames) == 0
+        error("one of --qname-file or --qname is required.")
+    end
+else  # qname_file != ""
+    isfile(qname_file) || error("File not found: --qname-file $(qname_file)")
+    if length(qnames) > 0
+        @warn "--qname-file and --qname are provided. Assume read names are not ordered."
+        args["no-ordered"] = true
+    end
+end
 
-function parse_id_list!(d::Dict{String, Bool}, qname_file::AbstractString)
-    open(qname_file, "r") do io
-        while !eof(io)
-            id = readline(io)
+
+function parse_id_list!(d::Dict{String, Bool}, qname_file::AbstractString, qnames::Vector{String})
+    if isfile(qname_file)
+        open(qname_file, "r") do io
+            while !eof(io)
+                id = readline(io)
+                d[id] = 1
+            end
+        end
+    end
+    if length(qnames) > 0
+        for id in qnames
             d[id] = 1
         end
     end
@@ -54,9 +78,9 @@ fasta_out_io = fasta_out isa String ? open(FASTA.Writer, fasta_out) : stdout
 record = FASTA.Record()
 
 
-@time if args["not-ordered"]
+if args["not-ordered"]
     id_list = Dict{String, Bool}()
-    parse_id_list!(id_list, args["qname-file"])
+    parse_id_list!(id_list, qname_file, qnames)
 
     while !eof(reader)
         read!(reader, record)
@@ -65,18 +89,37 @@ record = FASTA.Record()
         end
     end
 
-else # ordered fasta and
-    id_io = open(qname_file, "r")
+else # ordered fasta; either of qname_file or qnames
+    if isfile(qname_file)
+        id_io = open(qname_file, "r")
 
-    while !eof(id_io) && !eof(reader)
-        id = readline(id_io)
+        while !eof(id_io) && !eof(reader)
+            id = readline(id_io)
 
-        while !eof(reader)
-            read!(reader, record)
-            fa_id = FASTA.identifier(record)
-            if fa_id == id
-                write(fasta_out_io, record)
-                break
+            while !eof(reader)
+                read!(reader, record)
+                fa_id = FASTA.identifier(record)
+                if fa_id == id
+                    write(fasta_out_io, record)
+                    break
+                end
+            end
+        end
+    else
+        nqname = length(qnames)
+        id_i = 1
+        while id_i <= nqname && !eof(reader)
+            global id_i
+            id = qnames[id_i]
+            id_i += 1
+
+            while !eof(reader)
+                read!(reader, record)
+                fa_id = FASTA.identifier(record)
+                if fa_id == id
+                    write(fasta_out_io, record)
+                    break
+                end
             end
         end
     end
