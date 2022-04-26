@@ -1,6 +1,9 @@
 module BioPipelines
 
 using Reexport
+using PkgVersion
+
+const VERSION = @PkgVersion.Version
 
 include(joinpath("Config", "Config.jl"))
 using .Config
@@ -20,6 +23,9 @@ include(joinpath("Mapping", "Mapping.jl"))
 
 include(joinpath("Assembly", "Assembly.jl"))
 @reexport using .Assembly
+
+include("Scripts.jl")
+using .Scripts
 
 # updating after all modules are loaded
 Config.update_dep_and_prog()

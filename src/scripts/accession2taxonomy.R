@@ -25,23 +25,18 @@ parser$add_argument('-o', '--output', dest='output', metavar='TSV', type='charac
 
 args <- parser$parse_args()
 
-if (FALSE) {
-    setwd("/mnt/nvme1/jiacheng/polychromedetector_test/pcd_out/pcc-2-mapping")
-    args <- parser$parse_args(c('-i', '2020-10-Site4-R1.atria.fastq.filter.bam.fablastn7.fa.velvet.fa.blastn7-nt.tsv', '-d', '/home/jiacheng/.BioPipelines/db/taxonomizr/accessionTaxa.sql'))
-}
-
 db <- args$db
 inputs <- args$input
 accession_col <- args$`accession-column`
 
 for (input in inputs){
     fields_line <- system(str_interp("head -n 5 ${input} | grep '^# Fields: ' "), intern = TRUE)
-    
+
     if (length(fields_line) == 0) {
         # not results from blastn -outfmt 7
         dt <- read.delim(input, header = F, comment.char = '#')
         accession_col_auto <- accession_col
-        
+
     } else {
         fields <- str_split(str_remove(fields_line, "# Fields: "), ", ")[[1]]
         dt <- read.delim(input, header = F, col.names = fields, check.names = FALSE, comment.char = '#')
@@ -51,10 +46,10 @@ for (input in inputs){
             accession_col_auto <- accession_col
         }
     }
-    
+
     out <- str_replace_all(args$output, "<input>", input)
-    
-    
+
+
     ids <- accessionToTaxa(dt[[accession_col_auto]], db)
     taxs <- getTaxonomy(ids, db, desiredTaxa = c("superkingdom", "clade", "phylum", "class", "order", "family", "genus", "species", "subspecies", "strain"))
     dt <- cbind(dt, as.data.frame(taxs))
