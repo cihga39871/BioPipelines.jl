@@ -1,6 +1,6 @@
 #!julia
 using Pkg
-installed_pkgs = Set([p.name for p in values(Pkg.dependencies())])
+installed_pkgs = Set(keys(Pkg.project().dependencies))
 for pkg in ["ArgParse", "FASTX", "CodecZlib"]
     pkg in installed_pkgs || Pkg.add(pkg)
 end
