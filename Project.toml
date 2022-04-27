@@ -18,6 +18,7 @@ CodecZlib = "0.7"
 FASTX = "1"
 ArgParse = "1"
 Pipelines = "^0.7.0"
+PkgVersion = "0.1"
 julia = "1"
 
 [extras]
