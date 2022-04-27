@@ -1,60 +1,7 @@
-dep_atria = CmdDependency(
-    exec = `$(Config.path_to_atria)`,
+_dep_atria() = CmdDependency(
+    exec = `$(Config.path_atria)`,
     test_args = `--version`,
     validate_stdout = x -> occursin(r"v\d+\.\d+\.\d+", x)
-)
-
-prog_atria = CmdProgram(
-    name             = "Atria Trimming (Paired-end)",
-    id_file          = "trimming.atria-pe",
-    cmd_dependencies = [dep_atria],
-    inputs           = [
-        "READ1" => String,
-        "READ2" => String,
-        "ADAPTER1" => String => "AGATCGGAAGAGCACACGTCTGAACTCCAGTCA",
-        "ADAPTER2" => String => "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT",
-        "OUTPUT-DIR" => String => ".",
-        "THREADS" => Int => 8,
-        "COMPRESS" => String => "AUTO",
-        "OTHER-ARGS" => Cmd => Config.args_to_atria
-    ],
-    validate_inputs  = do_nothing,
-    prerequisites    = do_nothing,
-    cmd              = `$dep_atria -o OUTPUT-DIR -a ADAPTER1 -A ADAPTER2 -t THREADS -g COMPRESS -r READ1 OTHER-ARGS -R READ2`,
-    infer_outputs    = infer_atria_outputs,
-    outputs          = [
-        "OUTPUT-R1" => "auto generated; do not change",
-        "OUTPUT-R2" => "auto generated; do not change"
-    ],
-    validate_outputs = o -> begin
-        isfile(o["OUTPUT-R1"]) && isfile(o["OUTPUT-R2"])
-    end,
-    wrap_up          = do_nothing
-)
-prog_atria_pe = prog_atria
-
-prog_atria_se = CmdProgram(
-    name             = "Atria Trimming (Single-end)",
-    id_file          = "trimming.atria-se",
-    cmd_dependencies = [dep_atria],
-    inputs           = [
-        "READ1" => String,
-        "ADAPTER1" => String => "AGATCGGAAGAGCACACGTCTGAACTCCAGTCA",
-        "OUTPUT-DIR" => String => ".",
-        "THREADS" => Int => 8,
-        "COMPRESS" => String => "AUTO",
-        "OTHER-ARGS" => Cmd => Config.args_to_atria
-    ],
-    validate_inputs  = do_nothing,
-    prerequisites    = do_nothing,
-    cmd              = `atria -o OUTPUT-DIR -a ADAPTER1 -t THREADS -g COMPRESS -r READ1 OTHER-ARGS`,
-    infer_outputs    = infer_atria_outputs,
-    outputs          = [
-        "OUTPUT-R1" => "auto generated; do not change",
-        "OUTPUT-R2" => "auto generated; do not change"
-    ],
-    validate_outputs = do_nothing,
-    wrap_up          = do_nothing
 )
 
 function infer_atria_outputs(in::Dict)
@@ -100,3 +47,56 @@ function infer_atria_outputs(file1::String, outdir::String, compress::String)
     end
     outfile1
 end
+
+_prog_atria() = CmdProgram(
+    name             = "Atria Trimming (Paired-end)",
+    id_file          = ".trimming.atria-pe",
+    cmd_dependencies = [dep_atria],
+    inputs           = [
+        "READ1" => String,
+        "READ2" => String,
+        "ADAPTER1" => String => "AGATCGGAAGAGCACACGTCTGAACTCCAGTCA",
+        "ADAPTER2" => String => "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT",
+        "OUTPUT-DIR" => String => ".",
+        "THREADS" => Int => 8,
+        "COMPRESS" => String => "AUTO",
+        "OTHER-ARGS" => Cmd => Config.args_atria
+    ],
+    validate_inputs  = do_nothing,
+    prerequisites    = do_nothing,
+    cmd              = `$dep_atria -o OUTPUT-DIR -a ADAPTER1 -A ADAPTER2 -t THREADS -g COMPRESS -r READ1 OTHER-ARGS -R READ2`,
+    infer_outputs    = infer_atria_outputs,
+    outputs          = [
+        "OUTPUT-R1" => "auto generated; do not change",
+        "OUTPUT-R2" => "auto generated; do not change"
+    ],
+    validate_outputs = o -> begin
+        isfile(o["OUTPUT-R1"]) && isfile(o["OUTPUT-R2"])
+    end,
+    wrap_up          = do_nothing
+)
+_prog_atria_pe = _prog_atria
+
+_prog_atria_se() = CmdProgram(
+    name             = "Atria Trimming (Single-end)",
+    id_file          = ".trimming.atria-se",
+    cmd_dependencies = [dep_atria],
+    inputs           = [
+        "READ1" => String,
+        "ADAPTER1" => String => "AGATCGGAAGAGCACACGTCTGAACTCCAGTCA",
+        "OUTPUT-DIR" => String => ".",
+        "THREADS" => Int => 8,
+        "COMPRESS" => String => "AUTO",
+        "OTHER-ARGS" => Cmd => Config.args_atria
+    ],
+    validate_inputs  = do_nothing,
+    prerequisites    = do_nothing,
+    cmd              = `atria -o OUTPUT-DIR -a ADAPTER1 -t THREADS -g COMPRESS -r READ1 OTHER-ARGS`,
+    infer_outputs    = infer_atria_outputs,
+    outputs          = [
+        "OUTPUT-R1" => "auto generated; do not change",
+        "OUTPUT-R2" => "auto generated; do not change"
+    ],
+    validate_outputs = do_nothing,
+    wrap_up          = do_nothing
+)

@@ -1,12 +1,12 @@
-dep_bwa = CmdDependency(
-    exec = `$(Config.path_to_bwa)`,
+_dep_bwa() = CmdDependency(
+    exec = `$(Config.path_bwa)`,
     test_args = `mem`,
     validate_stderr = x -> occursin("bwa", x)
 )
 
-prog_bwa = CmdProgram(
+_prog_bwa() = CmdProgram(
     name             = "BWA Mapping",
-    id_file          = "mapping.bwa",
+    id_file          = ".mapping.bwa",
     cmd_dependencies = [dep_bwa, dep_samtools],
     inputs           = [
         "INDEX" => String,
@@ -14,14 +14,14 @@ prog_bwa = CmdProgram(
         "READ2" => Union{String, Cmd} => ``,
         "THREADS" => Int => 8,
         "THREADS-SAMTOOLS" => Int => 4,
-        "OTHER-ARGS" => Cmd => Config.args_to_bwa
+        "OTHER-ARGS" => Cmd => Config.args_bwa
     ],
     validate_inputs  = i -> begin
         check_dependency_file(i["READ1"]) &&
         (isempty(i["READ2"]) || check_dependency_file(i["READ2"]))
     end,
     prerequisites    = (i,o) -> begin
-        bwa_index(i["INDEX"])
+        bwa_index(i["INDEX"], bwa=dep_bwa)
     end,
     cmd              = pipeline(
         `$dep_bwa mem -t THREADS OTHER-ARGS INDEX READ1 READ2`,
@@ -67,7 +67,7 @@ function bwa_index(bwa_reference::String; bwa=dep_bwa)::String
     if !isfile(bwa_reference)
         error("bwa_index(): file not exist: $bwa_reference")
     end
-    
+
     # lock to prevent doing multiple index at the same time
     index_lock = bwa_reference * ".bwa_index_lock"
     touch(index_lock)
@@ -75,7 +75,7 @@ function bwa_index(bwa_reference::String; bwa=dep_bwa)::String
     # build bwa index
     @info "bwa_index(): building bwa reference: $bwa_reference"
     try
-        run(`$dep_bwa index $bwa_reference`)
+        run(`$bwa index $bwa_reference`)
         rm(index_lock, force=true)
     catch e
         rm(index_lock, force=true)

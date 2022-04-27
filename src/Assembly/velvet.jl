@@ -1,44 +1,50 @@
-dep_velveth = CmdDependency(
-    exec = `$(Config.path_to_velveth)`,
+_dep_velveth() = CmdDependency(
+    exec = `$(Config.path_velveth)`,
     test_args = ``,
     validate_stdout = x -> occursin("Version ", x)
 )
-dep_velvetg = CmdDependency(
-    exec = `$(Config.path_to_velvetg)`,
+_dep_velvetg() = CmdDependency(
+    exec = `$(Config.path_velvetg)`,
     test_args = ``,
     validate_stdout = x -> occursin("Version ", x)
 )
-
-prog_velvet = JuliaProgram(
+_prog_velvet() = JuliaProgram(
     name             = "Velvet Assembly",
-    id_file          = "assembly.velvet",
+    id_file          = ".assembly.velvet",
     cmd_dependencies = [dep_velveth, dep_velvetg],
     inputs           = [
-        "INDEX" => String,
-        "READ1" => String,
-        "READ2" => Union{String, Cmd} => ``,
-        "THREADS" => Int => 8,
-        "THREADS-SAMTOOLS" => Int => 4,
-        "OTHER-ARGS" => Cmd => Config.args_to_bwa_mem2
+        "OUTDIR" => String,
+        "HASH-LENGTH" => Int => 31,
+        "ARGS-VELVETH" => Cmd => Config.args_velveth,
+        "ARGS-VELVETG" => Cmd => Config.args_velvetg
     ],
-    validate_inputs  = i -> begin
-        check_dependency_file(i["READ1"]) &&
-        (isempty(i["READ2"]) || check_dependency_file(i["READ2"]))
-    end,
+    validate_inputs  = do_nothing,
     prerequisites    = (i,o) -> begin
-        bwa_mem2_index(i["INDEX"])
+        mkpath(i["OUTDIR"], mode=0o755)
     end,
-    cmd              = pipeline(
-        `$dep_bwa_mem2 mem -t THREADS OTHER-ARGS INDEX READ1 READ2`,
-        `$dep_julia $(Config.SCRIPTS["sam_correction"])`, # remove error lines genrated by bwa
-        `$dep_samtools view -@ THREADS-SAMTOOLS -b -o BAM`
-    ),
+    main             = (i,o) -> begin
+        outdir = i["OUTDIR"]
+        hash_length = i["HASH-LENGTH"]
+        args_velveth = i["ARGS-VELVETH"]
+        args_velvetg = i["ARGS-VELVETG"]
+        run(`$dep_velveth $outdir $hash_length $args_velveth`)
+        run(`$dep_velvetg $outdir $args_velvetg`)
+        fasta = abspath(o["FASTA"])
+        default_fasta = abspath(outdir, "contigs.fa")
+        if fasta != default_fasta
+            if !isfile(default_fasta)
+                error("Velvet Assembly Failed: no contigs.fa under $outdir")
+            end
+            cp(default_fasta, fasta; force=true)
+        end
+        return o
+    end,
     infer_outputs    = do_nothing,
     outputs          = [
-        "BAM" => String=> "<READ1>.bam"
+        "FASTA" => String => "<OUTDIR>/contigs.fa"
     ],
     validate_outputs = o -> begin
-        isfile(o["BAM"])
+        isfile(o["FASTA"])
     end,
     wrap_up          = do_nothing
 )
