@@ -28,7 +28,9 @@ include("Scripts.jl")
 using .Scripts
 
 # updating after all modules are loaded
-Config.update_dep_and_prog()
-Config.update_config(joinpath(homedir(), ".BioPipelines", "config.jl"); verbose = false)
+function __init__()
+    Config.update_dep_and_prog()
+    Config.update_config(joinpath(homedir(), ".BioPipelines", "config.jl"); verbose = false)
+end
 
 end

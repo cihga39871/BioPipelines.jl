@@ -1,9 +1,9 @@
-dep_julia = CmdDependency(
+_dep_julia() = CmdDependency(
     exec = `$(Base.julia_cmd())`,
     test_args = `--version`
 )
 
-prog_julia = CmdProgram(
+_prog_julia() = CmdProgram(
     name             = "Julia",
     id_file          = ".common.julia",
     cmd_dependencies = [dep_julia],
