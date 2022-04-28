@@ -40,9 +40,11 @@ using .Scripts
     biopipelines_init()
 
 If BioPipelines is precompiled, please manually call it just after loading BioPipelines. It will fix script and config errors.
+
+If bundling in an app, please use `prepend_module_name = ".Mod"` in which `.Mod` using BioPipelines.
 """
-function biopipelines_init()
-    Scripts.fix_scripts()
+function biopipelines_init(;prepend_module_name::String = "")
+    Scripts.fix_scripts(;prepend_module_name = prepend_module_name)
     Config.update_dep_and_prog()
     Config.update_config(joinpath(homedir(), ".BioPipelines", "config.jl"); verbose = false)
 end
