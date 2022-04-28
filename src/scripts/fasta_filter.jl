@@ -1,13 +1,13 @@
 #!julia
-using Pkg
-installed_pkgs = Set(keys(Pkg.project().dependencies))
-for pkg in ["ArgParse", "FASTX", "CodecZlib"]
-    pkg in installed_pkgs || Pkg.add(pkg)
-end
+# using Pkg
+# installed_pkgs = Set(keys(Pkg.project().dependencies))
+# for pkg in ["ArgParse", "FASTX", "CodecZlib"]
+#     pkg in installed_pkgs || Pkg.add(pkg)
+# end
 
-using FASTX
-using CodecZlib
-using ArgParse
+using BioPipelines.FASTX
+using BioPipelines.CodecZlib
+using BioPipelines.ArgParse
 
 function parsing_args(args)
     prog_discription = "Filter fasta records."

@@ -1,12 +1,12 @@
 
 # Reference: https://samtools.github.io/hts-specs/SAMv1.pdf
-using Pkg
-installed_pkgs = Set(keys(Pkg.project().dependencies))
-for pkg in ["ArgParse"]
-    pkg in installed_pkgs || Pkg.add(pkg)
-end
+# using Pkg
+# installed_pkgs = Set(keys(Pkg.project().dependencies))
+# for pkg in ["ArgParse"]
+#     pkg in installed_pkgs || Pkg.add(pkg)
+# end
 
-using ArgParse
+using BioPipelines.ArgParse
 
 function parsing_args(args)
     prog_usage = """samtools view -h BAM | $(@__FILE__) args... | samtools view -b -o FILTERED_BAM"""

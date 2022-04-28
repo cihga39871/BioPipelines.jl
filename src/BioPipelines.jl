@@ -2,12 +2,12 @@ module BioPipelines
 
 using Reexport
 using PkgVersion
-@reexport using ArgParse
-@reexport using CodecZlib
-@reexport using FASTX
-@reexport using Pipelines
-@reexport using Pkg
-@reexport using RCall
+using ArgParse
+using CodecZlib
+using FASTX
+using Pipelines
+using Pkg
+using RCall
 
 export biopipelines_init
 
