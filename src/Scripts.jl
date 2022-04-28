@@ -31,6 +31,9 @@ function fix_scripts()
     end
     nothing
 end
-fix_scripts()
+
+function __init__()
+    fix_scripts()
+end
 
 end
