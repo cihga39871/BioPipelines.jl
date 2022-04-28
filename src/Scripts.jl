@@ -26,7 +26,7 @@ function fix_scripts()
             if !isfile(script_path)
                 write(script_path, data)
             end
-            Config[name] = script_path
+            Config.SCRIPTS[name] = script_path
         end
     end
     nothing

@@ -30,6 +30,11 @@ include("Scripts.jl")
 using .Scripts
 
 # updating after all modules are loaded
+"""
+    biopipelines_init()
+
+If BioPipelines is precompiled, please manually call it just after loading BioPipelines. It will fix script and config errors.
+"""
 function biopipelines_init()
     Scripts.fix_scripts()
     Config.update_dep_and_prog()
