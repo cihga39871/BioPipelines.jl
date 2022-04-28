@@ -3,6 +3,8 @@ module BioPipelines
 using Reexport
 using PkgVersion
 
+export biopipelines_init
+
 const VERSION = @PkgVersion.Version
 
 include(joinpath("Config", "Config.jl"))
@@ -28,9 +30,12 @@ include("Scripts.jl")
 using .Scripts
 
 # updating after all modules are loaded
-function __init__()
+function biopipelines_init()
+    Scripts.fix_scripts()
     Config.update_dep_and_prog()
     Config.update_config(joinpath(homedir(), ".BioPipelines", "config.jl"); verbose = false)
 end
+
+biopipelines_init()
 
 end

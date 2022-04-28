@@ -32,8 +32,4 @@ function fix_scripts()
     nothing
 end
 
-function __init__()
-    fix_scripts()
-end
-
 end
