@@ -1,11 +1,12 @@
 module BioPipelines
 
 using Reexport
+@reexport using Pipelines
 using PkgVersion
+
 using ArgParse
 using CodecZlib
 using FASTX
-using Pipelines
 using Pkg
 using RCall
 
