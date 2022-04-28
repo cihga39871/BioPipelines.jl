@@ -14,6 +14,7 @@ export update_config, get_config
 path_samtools = "samtools"
 path_blastn = "blastn"
 path_makeblastdb = "makeblastdb"
+path_rscript = "Rscript"
 
 # QC
 path_fastqc = "fastqc"

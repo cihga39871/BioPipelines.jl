@@ -10,6 +10,9 @@ export dep_julia, prog_julia
 include("cmd.jl")
 export prog_cmd
 
+include("rscript.jl")
+export dep_rscript, prog_rscript
+
 include("samtools.jl")
 export dep_samtools, prog_samtools
 
