@@ -30,6 +30,17 @@ inputs <- args$input
 accession_col <- args$`accession-column`
 
 for (input in inputs){
+    
+    out <- str_replace_all(args$output, "<input>", input)
+    
+    nline <- system(str_interp("wc -l ${input} | awk '{print $1}' "), intern = TRUE)
+    if (nline == "0") {
+        # input is empty
+        writeLines(str_interp("Accession2Taxonomy: input is empty: ${input}"))
+        system(str_interp("truncate --size=0 ${out}"))
+        next
+    }
+
     fields_line <- system(str_interp("head -n 5 ${input} | grep '^# Fields: ' "), intern = TRUE)
 
     if (length(fields_line) == 0) {
@@ -46,9 +57,6 @@ for (input in inputs){
             accession_col_auto <- accession_col
         }
     }
-
-    out <- str_replace_all(args$output, "<input>", input)
-
 
     ids <- accessionToTaxa(dt[[accession_col_auto]], db)
     taxs <- getTaxonomy(ids, db, desiredTaxa = c("superkingdom", "clade", "phylum", "class", "order", "family", "genus", "species", "subspecies", "strain"))
