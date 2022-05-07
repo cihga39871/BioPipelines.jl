@@ -18,7 +18,8 @@ Check whether script files are available. They might be not available when bundl
 """
 function fix_scripts(;prepend_module_name::String = "")
     scripts_available = length(SCRIPTS_DATA) == length(Config.SCRIPTS) && all(map(isfile, values(Config.SCRIPTS)))
-    if !scripts_available
+    force_fix = prepend_module_name != ""
+    if !scripts_available || force_fix
         new_script_dir = joinpath(homedir(), ".BioPipelines", "scripts", "$prepend_module_name.$(BioPipelines.VERSION)")
         # if not writable, use tempdir
         new_script_dir = try
