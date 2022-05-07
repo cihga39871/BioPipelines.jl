@@ -14,7 +14,7 @@ const SCRIPTS_DATA = Dict{String, String}(
 
 Check whether script files are available. They might be not available when bundling in an app.
 
-If bundling in an app, please use `prepend_module_name = ".Mod"` in which `.Mod` using BioPipelines.
+- `prepend_module_name`: If bundling in an app, please use `prepend_module_name = ".Mod"` in which `.Mod` loads BioPipelines and can be accessed from Main. It will modify scripts containing `using BioPipelines` or `import BioPipelines` by prepending the module names to `BioPipelines` to make sure the script can found BioPipelines from Main module.
 """
 function fix_scripts(;prepend_module_name::String = "")
     scripts_available = length(SCRIPTS_DATA) == length(Config.SCRIPTS) && all(map(isfile, values(Config.SCRIPTS)))

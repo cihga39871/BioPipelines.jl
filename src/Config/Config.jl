@@ -44,21 +44,55 @@ path_taxonomizr_db = abspath(homedir(), ".BioPipelines", "db", "taxonomizr", "ac
 
 ## The previous settings will be override by configure files
 
+"""
+    update_config(config_files; verbose::Bool = true, exit_when_fail::Bool = false, resolve_dep_and_prog::Bool = true)
 
-function update_config(config_file::AbstractString; verbose::Bool = true)
+- `config_files`: `Vector` of config file paths, or `AbstractString` of the config file path.
+
+- `verbose`: show loading info or error.
+
+- `exit_when_fail`: if loading error, exit program.
+
+- `resolve_dep_and_prog`: after loading config, run `update_dep_and_prog()`.
+"""
+function update_config(config_file::AbstractString; verbose::Bool = true, exit_when_fail::Bool = false, resolve_dep_and_prog::Bool = true)
     if isfile(config_file)
         try
             @eval Config include($config_file)
             verbose && (@info "BioPipelines: Loading configuration: $config_file")
-        catch
-            error("BioPipelines: Loading configuration failed: $config_file")
-            rethrow()
+            # update dep and programs
+            resolve_dep_and_prog && update_dep_and_prog()
+            return true
+        catch ex
+            if exit_when_fail
+                @error "BioPipelines: Loading configuration failed: $config_file"
+                rethrow(ex)
+            else
+                @error "BioPipelines: Loading configuration failed: $config_file" exception=(ex,backtrace())
+            end
+            return false
         end
-        # update dep and programs
-        update_dep_and_prog()
-    elseif verbose
-        error("BioPipelines: Loading configuration failed: file not exist: $config_file")
+    else
+        if exit_when_fail
+            error("BioPipelines: Loading configuration failed: file not exist: $config_file")
+        elseif verbose
+            @error "BioPipelines: Loading configuration failed: file not exist: $config_file"
+        end
+        return false
     end
+end
+function update_config(config_files::Vector; verbose::Bool = true, exit_when_fail::Bool = false, resolve_dep_and_prog::Bool = true)
+    updated = false
+    for config_file in config_files
+        res = update_config(config_file; verbose = verbose, exit_when_fail = exit_when_fail, resolve_dep_and_prog = false)
+        if res
+            updated = true
+        end
+    end
+    if updated && resolve_dep_and_prog
+        update_dep_and_prog()
+    end
+    return updated
 end
 
 """

@@ -38,18 +38,42 @@ using .Scripts
 
 # updating after all modules are loaded
 """
-    biopipelines_init()
+    biopipelines_init(;
+        config_files = joinpath(homedir(), ".BioPipelines", "config.jl"),
+        verbose::Bool = false, exit_when_fail::Bool = false,
+        prepend_module_name::String = ""
+    )
 
-If BioPipelines is precompiled, please manually call it just after loading BioPipelines. It will fix script and config errors.
+It initializes BioPipelines, including fix scripts, and update dependency and programs using config files.
+
+It is automatically run with the default arguments in [`__init__()`](@ref), you should only call it manually when building an app that uses BioPipelines. In this case, please overwrite `BioPipelines.__init__()`.
+
+### Args of [`BioPipelines.Config.update_config`](@ref)
+
+- `config_files`: `Vector` of config file paths, or `AbstractString` of the config file path.
+
+- `verbose`: show config loading info or error.
+
+- `exit_when_fail`: if config loading error, exit program.
+
+- `resolve_dep_and_prog`: after loading config, run `update_dep_and_prog()`. *Caution*: you have to run `update_dep_and_prog()` before using any deps or progs. See also [`BioPipelines.Config.update_dep_and_prog`](@ref)
+
+### Args of [`BioPipelines.Scripts.fix_scripts`](@ref)
 
 If bundling in an app, please use `prepend_module_name = ".Mod"` in which `.Mod` using BioPipelines.
 """
-function biopipelines_init(;prepend_module_name::String = "")
+function biopipelines_init(;
+    config_files = joinpath(homedir(), ".BioPipelines", "config.jl"),
+    verbose::Bool = false, exit_when_fail::Bool = false, resolve_dep_and_prog::Bool = true,
+    prepend_module_name::String = ""
+)
     Scripts.fix_scripts(;prepend_module_name = prepend_module_name)
-    Config.update_dep_and_prog()
-    Config.update_config(joinpath(homedir(), ".BioPipelines", "config.jl"); verbose = false)
+    Config.update_config(config_files; verbose = verbose, exit_when_fail = exit_when_fail, resolve_dep_and_prog = false)
+    resolve_dep_and_prog && Config.update_dep_and_prog()
 end
 
-biopipelines_init()
+function __init__()
+    biopipelines_init()
+end
 
 end
