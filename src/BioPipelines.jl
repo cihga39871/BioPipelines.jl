@@ -46,7 +46,7 @@ using .Scripts
 
 It initializes BioPipelines, including fix scripts, and update dependency and programs using config files.
 
-You should call it *manually* after loading BioPipelines.
+You should call it *manually* for app building.
 
 ### Args of [`BioPipelines.Config.update_config`](@ref)
 
@@ -71,5 +71,7 @@ function biopipelines_init(;
     Config.update_config(config_files; verbose = verbose, exit_when_fail = exit_when_fail, resolve_dep_and_prog = false)
     resolve_dep_and_prog && Config.update_dep_and_prog()
 end
+
+biopipelines_init()
 
 end
