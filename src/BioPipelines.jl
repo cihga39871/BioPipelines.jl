@@ -46,7 +46,7 @@ using .Scripts
 
 It initializes BioPipelines, including fix scripts, and update dependency and programs using config files.
 
-It is automatically run with the default arguments in [`__init__()`](@ref), you should only call it manually when building an app that uses BioPipelines. In this case, please overwrite `BioPipelines.__init__()`.
+You should call it *manually* after loading BioPipelines.
 
 ### Args of [`BioPipelines.Config.update_config`](@ref)
 
@@ -70,10 +70,6 @@ function biopipelines_init(;
     Scripts.fix_scripts(;prepend_module_name = prepend_module_name)
     Config.update_config(config_files; verbose = verbose, exit_when_fail = exit_when_fail, resolve_dep_and_prog = false)
     resolve_dep_and_prog && Config.update_dep_and_prog()
-end
-
-function __init__()
-    biopipelines_init()
 end
 
 end
