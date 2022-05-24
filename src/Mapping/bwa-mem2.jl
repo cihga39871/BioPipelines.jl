@@ -60,8 +60,8 @@ _prog_bwa_mem2() = CmdProgram(
         "INDEX" => String,
         "READ1" => String,
         "READ2" => Union{String, Cmd} => ``,
-        "THREADS" => Int => 8,
-        "THREADS-SAMTOOLS" => Int => 4,
+        :THREADS => Int => 8,
+        Symbol("THREADS-SAMTOOLS") => Int => 4,
         "OTHER-ARGS" => Cmd => Config.args_bwa_mem2
     ],
     validate_inputs  = i -> begin

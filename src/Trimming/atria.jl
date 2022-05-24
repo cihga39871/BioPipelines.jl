@@ -58,7 +58,7 @@ _prog_atria() = CmdProgram(
         "ADAPTER1" => String => "AGATCGGAAGAGCACACGTCTGAACTCCAGTCA",
         "ADAPTER2" => String => "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT",
         "OUTPUT-DIR" => String => ".",
-        "THREADS" => Int => 8,
+        :THREADS => Int => 8,
         "COMPRESS" => String => "AUTO",
         "OTHER-ARGS" => Cmd => Config.args_atria
     ],
@@ -85,7 +85,7 @@ _prog_atria_se() = CmdProgram(
         "READ1" => String,
         "ADAPTER1" => String => "AGATCGGAAGAGCACACGTCTGAACTCCAGTCA",
         "OUTPUT-DIR" => String => ".",
-        "THREADS" => Int => 8,
+        :THREADS => Int => 8,
         "COMPRESS" => String => "AUTO",
         "OTHER-ARGS" => Cmd => Config.args_atria
     ],
