@@ -26,9 +26,9 @@ _prog_checkm_lineage_wf() = CmdProgram(
         "OTHER_ARGS" => Cmd => Config.args_checkm_lineage_wf
     ],
     outputs          = [
-        "OUTPUT_DIR" => String => "<INPUT-DIR>/checkm",
-        "TMP_DIR" => String => "<INPUT-DIR>/checkm_tmp",
-        "FILE" => String => "<OUTPUT-DIR>/checkm.stdout"
+        "OUTPUT_DIR" => String => "<INPUT_DIR>/checkm",
+        "TMP_DIR" => String => "<INPUT_DIR>/checkm_tmp",
+        "FILE" => String => "<OUTPUT_DIR>/checkm.stdout"
     ],
     validate_inputs  = quote
         check_dependency_dir(INPUT_DIR)
