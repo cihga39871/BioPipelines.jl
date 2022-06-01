@@ -20,6 +20,9 @@ path_rscript = "Rscript"
 path_fastqc = "fastqc"
 path_multiqc = "multiqc"
 
+path_checkm = "checkm"
+args_checkm_lineage_wf = ``
+
 # Trimming
 path_atria = "atria"
 args_atria = `--check-identifier --polyG`
