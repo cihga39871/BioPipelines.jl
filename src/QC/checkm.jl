@@ -28,6 +28,7 @@ _prog_checkm_lineage_wf() = CmdProgram(
         "OUTPUT-DIR" => String => "<INPUT-DIR>/checkm",
         "TMP-DIR" => String => "<INPUT-DIR>/checkm_tmp",
         "FILE" => String => "<OUTPUT-DIR>/checkm.stdout"
-    ]
+    ],
+    validate_inputs  = i -> check_dependency_dir(i["INPUT-DIR"]),
     cmd              = `$dep_checkm lineage_wf -t THREADS --pplacer_threads THREADS --extension EXTENSION --tmpdir TMP-DIR --file FILE OTHER-ARGS INPUT-DIR OUTPUT-DIR`
 )
