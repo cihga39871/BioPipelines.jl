@@ -29,10 +29,10 @@ _prog_checkm_lineage_wf() = CmdProgram(
         "TMP_DIR" => String => "<INPUT-DIR>/checkm_tmp",
         "FILE" => String => "<OUTPUT-DIR>/checkm.stdout"
     ],
-    validate_inputs  = begin
+    validate_inputs  = quote
         check_dependency_dir(INPUT_DIR)
     end,
-    prerequisites    = begin
+    prerequisites    = quote
         mkpath(TMP_DIR; mode = 0o755)
     end,
     cmd              = `$dep_checkm lineage_wf -t THREADS --pplacer_threads THREADS --extension EXTENSION --tmpdir TMP_DIR --file FILE OTHER_ARGS INPUT_DIR OUTPUT_DIR`
