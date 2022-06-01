@@ -19,16 +19,21 @@ _prog_checkm_lineage_wf() = CmdProgram(
     id_file          = ".qc.checkm",
     cmd_dependencies = [dep_checkm],
     inputs           = [
-        "INPUT-DIR" => String,
+        "INPUT_DIR" => String,
         :THREADS => Int => 8,
         "EXTENSION" => String => "fna",
-        "OTHER-ARGS" => Cmd => Config.args_checkm_lineage_wf
+        "OTHER_ARGS" => Cmd => Config.args_checkm_lineage_wf
     ],
     outputs          = [
-        "OUTPUT-DIR" => String => "<INPUT-DIR>/checkm",
-        "TMP-DIR" => String => "<INPUT-DIR>/checkm_tmp",
+        "OUTPUT_DIR" => String => "<INPUT-DIR>/checkm",
+        "TMP_DIR" => String => "<INPUT-DIR>/checkm_tmp",
         "FILE" => String => "<OUTPUT-DIR>/checkm.stdout"
     ],
-    validate_inputs  = i -> check_dependency_dir(i["INPUT-DIR"]),
-    cmd              = `$dep_checkm lineage_wf -t THREADS --pplacer_threads THREADS --extension EXTENSION --tmpdir TMP-DIR --file FILE OTHER-ARGS INPUT-DIR OUTPUT-DIR`
+    validate_inputs  = begin
+        check_dependency_dir(INPUT_DIR)
+    end,
+    prerequisites    = begin
+        mkpath(TMP_DIR; mode = 0o755)
+    end,
+    cmd              = `$dep_checkm lineage_wf -t THREADS --pplacer_threads THREADS --extension EXTENSION --tmpdir TMP_DIR --file FILE OTHER_ARGS INPUT_DIR OUTPUT_DIR`
 )
