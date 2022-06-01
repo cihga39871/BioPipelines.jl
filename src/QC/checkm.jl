@@ -14,7 +14,8 @@ _prog_checkm() = CmdProgram(
     cmd              = `$dep_checkm CMD`
 )
 
-_prog_checkm_lineage_wf() = @pkg CmdProgram(
+_prog_checkm_lineage_wf() = CmdProgram(
+    mod              = @__MODULE__,
     name             = "CheckM Lineage Workflow",
     id_file          = ".qc.checkm",
     cmd_dependencies = [dep_checkm],
