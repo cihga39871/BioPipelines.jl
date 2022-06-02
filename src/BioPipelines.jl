@@ -9,6 +9,7 @@ using CodecZlib
 using FASTX
 using Pkg
 using RCall
+using DataFrames, DataFramesMeta, CSV, JSON  # QC/checkm
 
 export biopipelines_init
 
