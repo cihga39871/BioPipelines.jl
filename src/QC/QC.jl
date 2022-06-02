@@ -2,7 +2,7 @@ module QC
 
 using Pipelines
 using ..Config
-using DataFrames, DataFramesMeta, CSV, JSON  # QC/checkm
+using DataFrames, DataFramesMeta, CSV, JSON, OrderedCollections  # QC/checkm
 
 include("fastqc.jl")
 export dep_fastqc, prog_fastqc
