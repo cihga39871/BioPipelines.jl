@@ -88,22 +88,23 @@ function parse_checkm_table(file::AbstractString)
     CSV.read(buf, DataFrame; ntasks = 1, delim = '\t', normalizenames = true)
 end
 
-mutable struct Completeness
+mutable struct RankStat
     name::String
     completeness::Float64
+    contamination::Float64
 end
-Completeness() = Completeness("", 0.0)
+RankStat() = RankStat("", 0.0, 0.0)
 
 mutable struct Lineage
-    species::Completeness
-    genus::Completeness
-    family::Completeness
-    order::Completeness
-    class::Completeness
-    phylum::Completeness
-    kingdom::Completeness
+    species::RankStat
+    genus::RankStat
+    family::RankStat
+    order::RankStat
+    class::RankStat
+    phylum::RankStat
+    kingdom::RankStat
 end
-Lineage() = Lineage(Completeness(), Completeness(), Completeness(), Completeness(), Completeness(), Completeness(), Completeness())
+Lineage() = Lineage(RankStat(), RankStat(), RankStat(), RankStat(), RankStat(), RankStat(), RankStat())
 
 @eval function Base.getproperty(l::Lineage, s::Symbol)
     d = $(Dict([Symbol(String(f)[1]) => f for f in fieldnames(Lineage)]))
@@ -112,21 +113,13 @@ Lineage() = Lineage(Completeness(), Completeness(), Completeness(), Completeness
 end
 Base.getproperty(l::Lineage, s::AbstractString) = Base.getproperty(l::Lineage, Symbol(s))
 
-function DataFrames.DataFrame(l::Lineage)
-    d = DataFrame()
-    for rank in fieldnames(Lineage)
-        v = getfield(l, rank)
-        d[!, rank] = [v.name]
-        d[!, Symbol(rank, "_completeness")] = [v.completeness]
-    end
-    d
-end
-function DataFrames.DataFrame(l::Lineage, sample_id::String)
+function DataFrames.DataFrame(l::Lineage, sample_id::String = "NA")
     d = DataFrame(:sample => [sample_id])
     for rank in fieldnames(Lineage)
         v = getfield(l, rank)
         d[!, rank] = [v.name]
         d[!, Symbol(rank, "_completeness")] = [v.completeness]
+        d[!, Symbol(rank, "_contamination")] = [v.contamination]
     end
     d
 end
@@ -137,21 +130,25 @@ function get_full_lineage(lineage_marker_file; sample_id = basename(dirname(line
     # remove Marker_lineage == root
     filter!(:Marker_lineage => x -> occursin("__", x), df)
     
+    lineage = Lineage()
+    if nrow(df) == 0
+        @goto final
+    end
+
     # get the highest completeness (the last row) of each Marker_lineage
     df_simple = combine(last, groupby(df, :Marker_lineage))
 
-    lineage = Lineage()
-    if nrow(df_simple) == 0
-        @goto final
-    end
+    
 
     @rtransform!(df_simple , $[:rank, :name] = split(:Marker_lineage, "__"))
 
     for r in eachrow(df_simple)
         v = getproperty(lineage, r.rank)
-        if v.completeness < r.Completeness
-            v.completeness = r.Completeness
+        if v.completeness < r.RankStat
+            # replace old
             v.name = r.name
+            v.completeness = r.RankStat
+            v.contamination = r.Contamination
         end
     end
 
