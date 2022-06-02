@@ -144,10 +144,10 @@ function get_full_lineage(lineage_marker_file; sample_id = basename(dirname(line
 
     for r in eachrow(df_simple)
         v = getproperty(lineage, r.rank)
-        if v.completeness < r.RankStat
+        if v.completeness < r.Completeness
             # replace old
             v.name = r.name
-            v.completeness = r.RankStat
+            v.completeness = r.Completeness
             v.contamination = r.Contamination
         end
     end
