@@ -112,7 +112,7 @@ Lineage() = Lineage(Completeness(), Completeness(), Completeness(), Completeness
 end
 Base.getproperty(l::Lineage, s::AbstractString) = Base.getproperty(l::Lineage, Symbol(s))
 
-function DataFrame(l::Lineage)
+function DataFrames.DataFrame(l::Lineage)
     d = DataFrame()
     for rank in fieldnames(Lineage)
         v = getfield(l, rank)
@@ -121,7 +121,7 @@ function DataFrame(l::Lineage)
     end
     d
 end
-function DataFrame(l::Lineage, sample_id::String)
+function DataFrames.DataFrame(l::Lineage, sample_id::String)
     d = DataFrame(:sample => [sample_id])
     for rank in fieldnames(Lineage)
         v = getfield(l, rank)
