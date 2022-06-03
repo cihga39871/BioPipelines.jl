@@ -20,6 +20,7 @@ Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 
 [compat]
 ArgParse = "1"
+CSV = "0.10"
 CodecZlib = "0.7"
 FASTX = "1"
 Pipelines = "^0.8"
