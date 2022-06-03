@@ -21,6 +21,7 @@ Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 [compat]
 ArgParse = "1"
 CodecZlib = "0.7"
+DataFrames = "1"
 FASTX = "1"
 Pipelines = "^0.8"
 PkgVersion = "0.1"
