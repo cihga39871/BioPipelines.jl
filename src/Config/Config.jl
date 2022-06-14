@@ -42,6 +42,10 @@ args_velveth = ``
 args_velvetg = ``
 args_velvet_optimizer = ``
 
+# GenomeClassification
+path_gtdbtk = "gtdbtk"
+env_gtdbtk = nothing  # not implemented
+
 # Accession to Taxonomy database; a file ending with sql (taxonomizr)
 path_taxonomizr_db = abspath(homedir(), ".BioPipelines", "db", "taxonomizr", "accessionTaxa.sql")
 
