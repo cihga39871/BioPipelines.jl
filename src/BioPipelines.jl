@@ -21,27 +21,35 @@ export get_config, update_config
 
 include(joinpath("Common", "Common.jl"))
 using .Common
+export Common
 
 include(joinpath("QC", "QC.jl"))
 using .QC
+export QC
 
 include(joinpath("Trimming", "Trimming.jl"))
 using .Trimming
+export Trimming
 
 include(joinpath("Mapping", "Mapping.jl"))
 using .Mapping
+export Mapping
 
 include(joinpath("Assembly", "Assembly.jl"))
 using .Assembly
+export Assembly
 
 include(joinpath("GenomeClassification", "GenomeClassification.jl"))
 using .GenomeClassification
+export GenomeClassification
 
 include(joinpath("GenomeAnnotation", "GenomeAnnotation.jl"))
 using .GenomeAnnotation
+export GenomeAnnotation
 
 include("Scripts.jl")
 using .Scripts
+export Scripts
 
 # updating after all modules are loaded
 """
