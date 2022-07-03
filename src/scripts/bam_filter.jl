@@ -36,6 +36,14 @@ function parsing_args(args)
         "--any"
             help = "if multiple tag filters, include reads if any tag filter passes."
             action = :store_true
+        "--stats"
+            help = "output stats delim-splitted table file"
+            default = "<stderr>"
+            arg_type = String
+        "--out", "-o"
+            help = "output filtered sam file"
+            default = "<stdout>"
+            arg_type = String
     end
     return parse_args(args, settings)
 end
@@ -172,6 +180,32 @@ end
 # args
 args = parsing_args(ARGS)
 
+file_sam = args["out"]
+if file_sam == "<stdout>"
+    io_sam = stdout
+else
+    io_sam = open(file_sam, "w+")
+end
+
+file_stats = args["stats"]
+if file_stats == "<stderr>"
+    io_stats = stderr
+else
+    io_stats = open(file_stats, "w+")
+end
+
+# stat preparation
+mutable struct SamStats
+    total_reads::Int64
+    pass_all::Int64
+    fail_flag::Int64
+    fail_map_qual::Int64
+    fail_tag::Int64
+end
+sam_stats = SamStats(0,0,0,0,0)
+
+# filter process
+
 f = args["f"]
 F = args["F"]
 G = args["G"]
@@ -183,7 +217,10 @@ FLAG_PROCESS = if f == 0 && F == 0 && G == 0
     nothing
 else
     quote
-        filter_flag(splitted, f=$f, F=$F, G=$G) || (return false)
+        if !filter_flag(splitted, f=$f, F=$F, G=$G)
+            sam_stats.fail_flag += 1
+            return false
+        end
     end
 end
 
@@ -191,7 +228,10 @@ MQ_PROCESS = if min_mq == 0
     nothing
 else
     quote
-        filter_map_quality(splitted, $min_mq) || (return false)
+        if !filter_map_quality(splitted, $min_mq)
+            sam_stats.fail_map_qual += 1
+            return false
+        end
     end
 end
 
@@ -199,11 +239,15 @@ TAG_PROCESS = if isempty(tag_filters)
     nothing
 else
     quote
-        all_or_any([filter_tag(splitted, filter) for filter in tag_filters]) || (return false)
+        if !all_or_any([filter_tag(splitted, filter) for filter in tag_filters])
+            sam_stats.fail_tag += 1
+            return false
+        end
     end
 end
 
-@eval function bam_filter_process(in::IO, out::IO, first_record_line)
+@eval function bam_filter_process(in::IO, out::IO, first_record_line::Bool, sam_stats::SamStats)
+
     line = readline(in)
     isempty(line) && return
 
@@ -216,22 +260,46 @@ end
         println(out, "@PG\tID:bam_tag_filter.$rand_id\tPN:bam_tag_filter.jl\tCL:bam_tag_filter.jl $args_str")
     end
 
+    sam_stats.total_reads += 1
+
     splitted = split(line, '\t')
 
     $MQ_PROCESS
     $FLAG_PROCESS
     $TAG_PROCESS
 
+    sam_stats.pass_all += 1
+
     println(out, line)
     return false
 end
 
-function bam_filter_wrapper(in::IO, out::IO)
+function bam_filter_wrapper(in::IO, out::IO, sam_stats::SamStats)
 
     first_record_line = true
     while !eof(in)
-        first_record_line = bam_filter_process(stdin, stdout, first_record_line)
+        first_record_line = bam_filter_process(in, out, first_record_line, sam_stats)
     end
 end
 
-bam_filter_wrapper(stdin, stdout)
+bam_filter_wrapper(stdin, io_sam, sam_stats)
+io_sam isa Base.TTY || close(io_sam)
+
+
+## sam stats
+str_flag = "include all $f, include none $F, exclude all $G"
+str_tag = join(args["tag-filter"], ",")
+
+pct_pass = round(sam_stats.pass_all / sam_stats.total_reads * 100; digits = 3)
+pct_fail_flag = round(sam_stats.fail_flag / sam_stats.total_reads * 100; digits = 3)
+pct_fail_map_qual = round(sam_stats.fail_map_qual / sam_stats.total_reads * 100; digits = 3)
+pct_fail_tag = round(sam_stats.fail_tag / sam_stats.total_reads * 100; digits = 3)
+
+println(io_stats, "# Stats of Bam Filter")
+println(io_stats, "total\t$(sam_stats.total_reads)\t100.000%\ttotal input reads")
+println(io_stats, "passed\t$(sam_stats.pass_all)\t$pct_pass%\ttotal output reads")
+println(io_stats, "failed flag\t$(sam_stats.fail_flag)\t$pct_fail_flag%\t$str_flag")
+println(io_stats, "failed map quality\t$(sam_stats.fail_map_qual)\t$pct_fail_map_qual%\tmin quality $min_mq")
+println(io_stats, "failed tag\t$(sam_stats.fail_tag)\t$pct_fail_tag%\t$str_tag")
+
+io_stats isa Base.TTY || close(io_stats)
