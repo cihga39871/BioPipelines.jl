@@ -47,6 +47,10 @@ include(joinpath("GenomeAnnotation", "GenomeAnnotation.jl"))
 using .GenomeAnnotation
 export GenomeAnnotation
 
+include(joinpath("MetagenomeClassification", "MetagenomeClassification.jl"))
+using .MetagenomeClassification
+export MetagenomeClassification
+
 include("Scripts.jl")
 using .Scripts
 export Scripts

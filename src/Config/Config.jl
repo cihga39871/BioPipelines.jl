@@ -46,6 +46,11 @@ args_velvet_optimizer = ``
 path_gtdbtk = "gtdbtk"
 env_gtdbtk = nothing  # not implemented
 
+# MetagenomeClassification
+path_kraken2 = "kraken2"
+args_kraken2 = ``
+path_kraken2_db = "none"
+
 # Accession to Taxonomy database; a file ending with sql (taxonomizr)
 path_taxonomizr_db = abspath(homedir(), ".BioPipelines", "db", "taxonomizr", "accessionTaxa.sql")
 
