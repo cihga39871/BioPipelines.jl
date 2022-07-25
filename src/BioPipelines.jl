@@ -56,6 +56,9 @@ include("Scripts.jl")
 using .Scripts
 export Scripts
 
+include("utils.jl")
+export merge_tables
+
 # updating after all modules are loaded
 """
     biopipelines_init(;
