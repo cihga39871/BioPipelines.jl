@@ -11,7 +11,7 @@ _prog_kraken2() = CmdProgram(
     inputs = [
         "INPUT_SEQ" => String,
         "DB" => String => Config.path_kraken2_db,
-        :THREADS => Int => 8,
+        :THREADS => Int => 1,
         "OTHER_ARGS" => Cmd => Config.args_kraken2
     ],
     outputs = [
