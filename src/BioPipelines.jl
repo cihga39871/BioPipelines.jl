@@ -9,7 +9,8 @@ using CodecZlib
 using FASTX
 using Pkg
 using RCall
-using DataFrames, DataFramesMeta, CSV, JSON, OrderedCollections  # QC/checkm
+using DataFrames, DataFramesMeta, CSV, JSON, OrderedCollections  # QC/checkm, MetagenomeClassification/kraken2
+using FASTX # MetagenomeClassification/kraken2
 
 export biopipelines_init
 
