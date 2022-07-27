@@ -1,7 +1,7 @@
 name = "BioPipelines"
 uuid = "3ee1394b-c0b4-492e-bb3c-d8bc89983562"
 authors = ["Jiacheng Chuan <jiacheng_chuan@outlook.com>"]
-version = "0.1.81"
+version = "0.1.82"
 
 [deps]
 ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
