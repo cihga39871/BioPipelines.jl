@@ -49,7 +49,11 @@ Dict{String, Any}:
 function kraken2_split_fasta_by_tax(kraken2_outputs::Dict; rank_code::String = "S", rank_pct::Real = 20)
     report_df = CSV.read(kraken2_outputs["REPORT"], DataFrame, delim='\t', header = KRAKEN2_REPORT_HEADER, types = KRAKEN2_REPORT_HEADER_TYPES, stripwhitespace = true)
 
-    filter!(row -> row.RankCode == rank_code && row.PctFragment >= rank_pct, report_df)
+    filter!(row -> 
+        row.RankCode == rank_code && 
+        row.PctFragment >= rank_pct && 
+        row.NumFragmentDirect > 0,  # if == 0, empty fa will be generated
+    report_df)
 
     out_report_filtered_path = kraken2_outputs["REPORT"] * ".filtered.tsv"
     CSV.write(out_report_filtered_path, report_df, delim = '\t')
