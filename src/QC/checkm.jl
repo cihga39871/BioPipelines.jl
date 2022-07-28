@@ -62,8 +62,8 @@ _prog_checkm_lineage_summary() = JuliaProgram(
     end,
     main              = quote
         run(`$dep_checkm qa -o 3 -f $FILE $LINEAGE_MS $DIR`)
-        lineage_df = get_full_lineage(FILE; sample_id = basename(DIR))
-        bin_stat_df = get_bin_stats(BINSTAT; sample_id = basename(DIR))
+        lineage_df = get_full_lineage(FILE)
+        bin_stat_df = get_bin_stats(BINSTAT)
         STAT_DF = leftjoin(bin_stat_df, lineage_df, on = :sample)
         CSV.write(STAT_SUMMARY, STAT_DF, delim='\t')
     end,
@@ -124,64 +124,76 @@ function DataFrames.DataFrame(l::Lineage, sample_id::String = "NA")
     d
 end
 
-function get_full_lineage(lineage_marker_file; sample_id = basename(dirname(lineage_marker_file)), outfile = lineage_marker_file * ".tsv")
+function get_full_lineage(lineage_marker_file; outfile = lineage_marker_file * ".tsv")
     df = parse_checkm_table(lineage_marker_file)
     
     # remove Marker_lineage == root
     filter!(:Marker_lineage => x -> occursin("__", x), df)
     
-    lineage = Lineage()
     if nrow(df) == 0
+        df_lineages = DataFrame(Lineage(), "")
         @goto final
     end
 
     # get the highest completeness (the last row) of each Marker_lineage
-    df_simple = combine(last, groupby(df, :Marker_lineage))
+    gdf_sample = groupby(df, :Bin_Id)
+    df_sample_lineages = DataFrame[]
+    for idf in gdf_sample
+        sample_id = idf[1, :Bin_Id]
+        df_sample = combine(last, groupby(idf, :Marker_lineage))
+        select!(df_sample, :Bin_Id, All())
+        @rtransform!(df_sample , $[:rank, :name] = split(:Marker_lineage, "__"))
 
+        lineage = Lineage()
+        for r in eachrow(df_sample)
+            v = getproperty(lineage, r.rank)
+            if v.completeness < r.Completeness
+                # replace old
+                v.name = r.name
+                v.completeness = r.Completeness
+                v.contamination = r.Contamination
+            end
+        end
+        
+        df_sample_lineage = DataFrame(lineage, sample_id)
+
+        push!(df_sample_lineages, df_sample_lineage)
+    end
     
 
-    @rtransform!(df_simple , $[:rank, :name] = split(:Marker_lineage, "__"))
-
-    for r in eachrow(df_simple)
-        v = getproperty(lineage, r.rank)
-        if v.completeness < r.Completeness
-            # replace old
-            v.name = r.name
-            v.completeness = r.Completeness
-            v.contamination = r.Contamination
-        end
-    end
-
     @label final
-    res = DataFrame(lineage, sample_id)
-    CSV.write(outfile, res, delim='\t')
-    return res
+    df_lineages = vcat(df_sample_lineages...)
+    sort!(df_lineages, :sample)
+
+    CSV.write(outfile, df_lineages, delim='\t')
+    return df_lineages
 end
 
-function get_bin_stats(file; outfile = file * ".real.tsv", sample_id::String = "auto")
-    line = readline(file)
-    if length(line) == 0
-        @goto final
-    end
-    splitted = split(line, '\t')
-    if length(splitted) != 2
-        @goto final
-    end
+function get_bin_stats(file; outfile = file * ".real.tsv")
+    lines = readlines(file)
+    dfs_bin_stats = DataFrame[]
+    for line in lines
+        sample_id = nothing
+        if length(line) == 0
+            continue
+        end
+        splitted = split(line, '\t')
+        if length(splitted) != 2
+            @warn "Invalid bin_stats line" file line
+            continue
+        end
 
-    if sample_id == "auto"
         sample_id = String(splitted[1])
+
+        json = replace(splitted[2], '\'' => '"')
+        dict = JSON.parse(json, dicttype = OrderedDict)
+
+        res = DataFrame(:sample => sample_id)
+        insertcols!(res, collect(dict)...)
+        push!(dfs_bin_stats, res)
     end
-
-    json = replace(splitted[2], '\'' => '"')
-    dict = JSON.parse(json, dicttype = OrderedDict)
-
-
-    @label final
-    if sample_id == "auto"
-        sample_id = "Invalid: $file"
-    end
-    res = DataFrame(:sample => sample_id)
-    insertcols!(res, collect(dict)...)
-    CSV.write(outfile, res, delim='\t')
-    return res
+    df_bin_stats = vcat(dfs_bin_stats...)
+    sort!(df_bin_stats, :sample)
+    CSV.write(outfile, df_bin_stats, delim='\t')
+    return df_bin_stats
 end
