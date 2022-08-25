@@ -19,7 +19,7 @@ _prog_gtdbtk_classify_wf() = CmdProgram(
 )
 
 _prog_gtdbtk_de_novo_wf() = CmdProgram(
-    # mod = @__MODULE__,
+    mod = @__MODULE__,
     name = "Gtdb-tk De Novo Workflow",
     id_file = ".gtdbtk.dnw",
     cmd_dependencies = [dep_gtdbtk],
