@@ -1,7 +1,7 @@
 name = "BioPipelines"
 uuid = "3ee1394b-c0b4-492e-bb3c-d8bc89983562"
 authors = ["Jiacheng Chuan <jiacheng_chuan@outlook.com>"]
-version = "0.1.86"
+version = "0.1.87"
 
 [deps]
 ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
@@ -23,7 +23,7 @@ ArgParse = "^1"
 CodecZlib = "0.7"
 FASTX = "^1"
 Pipelines = "^0.9"
-PkgVersion = "^0.1"
+PkgVersion = "^0.3"
 RCall = "^0.13"
 Reexport = "^1"
 julia = "^1"
