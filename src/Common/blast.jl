@@ -16,7 +16,8 @@ _prog_blastn() = CmdProgram(
         end
         return true
     end,
-    cmd              = `$dep_blastn -num_threads NTHREADS ARGS`
+    cmd              = `$dep_blastn -num_threads NTHREADS ARGS`,
+    arg_forward      = ["NTHREADS" => :ncpu]
 )
 
 _dep_makeblastdb() = CmdDependency(

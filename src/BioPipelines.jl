@@ -95,6 +95,16 @@ function biopipelines_init(;
     resolve_dep_and_prog && Config.update_dep_and_prog()
 end
 
+function __init__()
+    for ext in [".jl", ".R", ".py"]
+        # If a file with an extension listed, infomation of this file will not write to run_id_file in Pipelines.
+        if !(ext in Pipelines.RUN_ID_LINE_SKIP_EXTENSION)
+            push!(Pipelines.RUN_ID_LINE_SKIP_EXTENSION, ext)
+        end
+    end
+end
+
+# do NOT move it to __init__()
 biopipelines_init()
 
 end

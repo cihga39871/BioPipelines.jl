@@ -20,7 +20,8 @@ _prog_kraken2() = CmdProgram(
         "OUTPUT" => String => "<INPUT_SEQ>.kraken2.out",
         "REPORT" => String => "<INPUT_SEQ>.kraken2.report"
     ],
-    cmd = `$dep_kraken2 --db DB --threads THREADS --unclassified-out UNCLASSIFIED_OUT --classified-out CLASSIFIED_OUT --output OUTPUT --report REPORT OTHER_ARGS INPUT_SEQ`
+    cmd = `$dep_kraken2 --db DB --threads THREADS --unclassified-out UNCLASSIFIED_OUT --classified-out CLASSIFIED_OUT --output OUTPUT --report REPORT OTHER_ARGS INPUT_SEQ`,
+    arg_forward      = ["THREADS" => :ncpu]
 )
 
 const KRAKEN2_REPORT_HEADER = ["PctFragment", "NumFragment", "NumFragmentDirect", "RankCode", "TaxID", "ScientificName"]

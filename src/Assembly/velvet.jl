@@ -14,9 +14,9 @@ _prog_velvet() = JuliaProgram(
     cmd_dependencies = [dep_velveth, dep_velvetg],
     inputs           = [
         "OUTDIR" => String,
-        "HASH-LENGTH" => Int => 31,
-        "ARGS-VELVETH" => Cmd => Config.args_velveth,
-        "ARGS-VELVETG" => Cmd => Config.args_velvetg
+        "HASH_LENGTH" => Int => 31,
+        "ARGS_VELVETH" => Cmd => Config.args_velveth,
+        "ARGS_VELVETG" => Cmd => Config.args_velvetg
     ],
     validate_inputs  = do_nothing,
     prerequisites    = (i,o) -> begin
@@ -24,9 +24,9 @@ _prog_velvet() = JuliaProgram(
     end,
     main             = (i,o) -> begin
         outdir = i["OUTDIR"]
-        hash_length = i["HASH-LENGTH"]
-        args_velveth = i["ARGS-VELVETH"]
-        args_velvetg = i["ARGS-VELVETG"]
+        hash_length = i["HASH_LENGTH"]
+        args_velveth = i["ARGS_VELVETH"]
+        args_velvetg = i["ARGS_VELVETG"]
         run(`$dep_velveth $outdir $hash_length $args_velveth`)
         run(`$dep_velvetg $outdir $args_velvetg`)
         fasta = abspath(o["FASTA"])
