@@ -8,7 +8,6 @@ using ArgParse
 using CodecZlib
 using FASTX
 using Pkg
-using RCall
 using DataFrames, DataFramesMeta, CSV, JSON, OrderedCollections  # QC/checkm, MetagenomeClassification/kraken2
 using FASTX # MetagenomeClassification/kraken2
 

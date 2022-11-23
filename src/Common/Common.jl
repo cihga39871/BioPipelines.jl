@@ -2,7 +2,6 @@ module Common
 
 using Pipelines
 using ..Config
-using RCall
 
 include("julia.jl")
 export dep_julia, prog_julia
