@@ -11,9 +11,7 @@ _prog_masurca() = JuliaProgram(
         "ILLUMINA_R1" => "" => String,
         "ILLUMINA_R2" => "" => String,
         "LONG_READS" => "" => String,
-        :THREADS => 1 => Int,
-        "OUTDIR" => "." => String, 
-        "TMPDIR" => "<OUTDIR>.masurca.tmp"
+        :THREADS => 1 => Int
     ],
     validate_inputs  = do_nothing,
     prerequisites    = do_nothing,
@@ -58,6 +56,8 @@ _prog_masurca() = JuliaProgram(
     end,
     infer_outputs    = do_nothing,
     outputs          = [
+        "OUTDIR" => "masurca_out" => String, 
+        "TMPDIR" => "<OUTDIR>.masurca.tmp",
         "PRIMARY_FA" => String => "<OUTDIR>/primary.genome.scf.fasta",
         "ALTERNATIVE_FA" => String => "<OUTDIR>/alternative.genome.scf.fasta",
         "GENOME_QC" => String => "<OUTDIR>/genome.qc",
