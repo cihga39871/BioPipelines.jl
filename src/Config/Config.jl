@@ -35,6 +35,7 @@ path_bwa_mem2 = "bwa-mem2"
 args_bwa_mem2 = ``
 
 # Assembly
+path_masurca = "masurca"
 path_velveth = "velveth"
 path_velvetg = "velvetg"
 path_velvet_optimizer = "VelvetOptimiser.pl"
