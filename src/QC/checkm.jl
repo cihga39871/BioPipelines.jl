@@ -36,7 +36,8 @@ _prog_checkm_lineage_wf() = CmdProgram(
     prerequisites    = quote
         mkpath(TMP_DIR; mode = 0o755)
     end,
-    cmd              = `$dep_checkm lineage_wf -t THREADS --pplacer_threads THREADS --extension EXTENSION --tmpdir TMP_DIR --file FILE OTHER_ARGS INPUT_DIR OUTPUT_DIR`
+    cmd              = `$dep_checkm lineage_wf -t THREADS --pplacer_threads THREADS --extension EXTENSION --tmpdir TMP_DIR --file FILE OTHER_ARGS INPUT_DIR OUTPUT_DIR`,
+    arg_forward      = ["THREADS" => :ncpu]
 )
 
 

@@ -15,7 +15,8 @@ _prog_gtdbtk_classify_wf() = CmdProgram(
         "OTHER_ARGS" => Cmd => ``
     ],
     outputs = "OUTPUT_DIR" => String => "<GENOME_DIR>/gtdbtk_classify",
-    cmd = `$dep_gtdbtk classify_wf --genome_dir GENOME_DIR --out_dir OUTPUT_DIR -x EXTENSION --cpus THREADS --pplacer_cpus THREADS OTHER_ARGS`
+    cmd = `$dep_gtdbtk classify_wf --genome_dir GENOME_DIR --out_dir OUTPUT_DIR -x EXTENSION --cpus THREADS --pplacer_cpus THREADS OTHER_ARGS`,
+    arg_forward      = ["THREADS" => :ncpu]
 )
 
 _prog_gtdbtk_de_novo_wf() = CmdProgram(
@@ -38,5 +39,6 @@ _prog_gtdbtk_de_novo_wf() = CmdProgram(
         end
     end,
     outputs = "OUTPUT_DIR" => String => "<GENOME_DIR>/gtdbtk_de_novo_classify",
-    cmd = `$dep_gtdbtk de_novo_wf --genome_dir GENOME_DIR BACTERIA_OR_ARCHAEA --out_dir OUTPUT_DIR -x EXTENSION --cpus THREADS --outgroup_taxon OUTGROUP_TAXON OTHER_ARGS`
+    cmd = `$dep_gtdbtk de_novo_wf --genome_dir GENOME_DIR BACTERIA_OR_ARCHAEA --out_dir OUTPUT_DIR -x EXTENSION --cpus THREADS --outgroup_taxon OUTGROUP_TAXON OTHER_ARGS`,
+    arg_forward      = ["THREADS" => :ncpu]
 )

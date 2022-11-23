@@ -6,17 +6,17 @@ _dep_atria() = CmdDependency(
 
 function infer_atria_outputs(in::Dict)
     file1 = in["READ1"]
-    outdir = in["OUTPUT-DIR"]
+    outdir = in["OUTPUT_DIR"]
     compress = in["COMPRESS"]
     if haskey(in, "READ2")
         file2 = in["READ2"]
         return Dict(
-            "OUTPUT-R1" => infer_atria_outputs(file1, outdir, compress),
-            "OUTPUT-R2" => infer_atria_outputs(file2, outdir, compress)
+            "OUTPUT_R1" => infer_atria_outputs(file1, outdir, compress),
+            "OUTPUT_R2" => infer_atria_outputs(file2, outdir, compress)
         )
     else
         return Dict(
-            "OUTPUT-R1" => infer_atria_outputs(file1, outdir, compress)
+            "OUTPUT_R1" => infer_atria_outputs(file1, outdir, compress)
         )
     end
 end
@@ -57,23 +57,24 @@ _prog_atria() = CmdProgram(
         "READ2" => String,
         "ADAPTER1" => String => "AGATCGGAAGAGCACACGTCTGAACTCCAGTCA",
         "ADAPTER2" => String => "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT",
-        "OUTPUT-DIR" => String => ".",
+        "OUTPUT_DIR" => String => ".",
         :THREADS => Int => 8,
         "COMPRESS" => String => "AUTO",
-        "OTHER-ARGS" => Cmd => Config.args_atria
+        "OTHER_ARGS" => Cmd => Config.args_atria
     ],
     validate_inputs  = do_nothing,
     prerequisites    = do_nothing,
-    cmd              = `$dep_atria -o OUTPUT-DIR -a ADAPTER1 -A ADAPTER2 -t THREADS -g COMPRESS -r READ1 OTHER-ARGS -R READ2`,
+    cmd              = `$dep_atria -o OUTPUT_DIR -a ADAPTER1 -A ADAPTER2 -t THREADS -g COMPRESS -r READ1 OTHER_ARGS -R READ2`,
     infer_outputs    = infer_atria_outputs,
     outputs          = [
-        "OUTPUT-R1" => "auto generated; do not change",
-        "OUTPUT-R2" => "auto generated; do not change"
+        "OUTPUT_R1" => "auto generated; do not change",
+        "OUTPUT_R2" => "auto generated; do not change"
     ],
     validate_outputs = o -> begin
-        isfile(o["OUTPUT-R1"]) && isfile(o["OUTPUT-R2"])
+        isfile(o["OUTPUT_R1"]) && isfile(o["OUTPUT_R2"])
     end,
-    wrap_up          = do_nothing
+    wrap_up          = do_nothing,
+    arg_forward      = ["THREADS" => :ncpu]
 )
 _prog_atria_pe = _prog_atria
 
@@ -84,19 +85,20 @@ _prog_atria_se() = CmdProgram(
     inputs           = [
         "READ1" => String,
         "ADAPTER1" => String => "AGATCGGAAGAGCACACGTCTGAACTCCAGTCA",
-        "OUTPUT-DIR" => String => ".",
+        "OUTPUT_DIR" => String => ".",
         :THREADS => Int => 8,
         "COMPRESS" => String => "AUTO",
-        "OTHER-ARGS" => Cmd => Config.args_atria
+        "OTHER_ARGS" => Cmd => Config.args_atria
     ],
     validate_inputs  = do_nothing,
     prerequisites    = do_nothing,
-    cmd              = `atria -o OUTPUT-DIR -a ADAPTER1 -t THREADS -g COMPRESS -r READ1 OTHER-ARGS`,
+    cmd              = `atria -o OUTPUT_DIR -a ADAPTER1 -t THREADS -g COMPRESS -r READ1 OTHER_ARGS`,
     infer_outputs    = infer_atria_outputs,
     outputs          = [
-        "OUTPUT-R1" => "auto generated; do not change",
-        "OUTPUT-R2" => "auto generated; do not change"
+        "OUTPUT_R1" => "auto generated; do not change",
+        "OUTPUT_R2" => "auto generated; do not change"
     ],
     validate_outputs = do_nothing,
-    wrap_up          = do_nothing
+    wrap_up          = do_nothing,
+    arg_forward      = ["THREADS" => :ncpu]
 )
