@@ -8,6 +8,16 @@ function infer_atria_outputs(in::Dict)
     file1 = in["READ1"]
     outdir = in["OUTPUT_DIR"]
     compress = in["COMPRESS"]
+    other_args = in["OTHER_ARGS"]
+    for (i, arg) in enumerate(other_args.exec)
+        if arg == "-g" || arg == "--compress"
+            if length(other_args.exec) >= i+1
+                compress = other_args.exec[i+1]
+            else
+                error("Atria argument error: no argument after --compress or -g.")
+            end
+        end
+    end
     if haskey(in, "READ2")
         file2 = in["READ2"]
         return Dict(
@@ -64,7 +74,7 @@ _prog_atria() = CmdProgram(
     ],
     validate_inputs  = do_nothing,
     prerequisites    = do_nothing,
-    cmd              = `$dep_atria -o OUTPUT_DIR -a ADAPTER1 -A ADAPTER2 -t THREADS -g COMPRESS -r READ1 OTHER_ARGS -R READ2`,
+    cmd              = `$dep_atria -o OUTPUT_DIR -a ADAPTER1 -A ADAPTER2 -t THREADS -g COMPRESS -r READ1 -R READ2 OTHER_ARGS`,
     infer_outputs    = infer_atria_outputs,
     outputs          = [
         "OUTPUT_R1" => "auto generated; do not change",

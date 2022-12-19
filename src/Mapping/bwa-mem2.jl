@@ -73,7 +73,7 @@ _prog_bwa_mem2() = CmdProgram(
     end,
     cmd              = pipeline(
         `$dep_bwa_mem2 mem -t THREADS OTHER_ARGS INDEX READ1 READ2`,
-        `$dep_julia $(Config.SCRIPTS["sam_correction"])`, # remove error lines genrated by bwa
+        # `$dep_julia $(Config.SCRIPTS["sam_correction"])`, # remove error lines genrated by bwa
         `$dep_samtools view -@ THREADS_SAMTOOLS -b -o BAM`
     ),
     infer_outputs    = do_nothing,
