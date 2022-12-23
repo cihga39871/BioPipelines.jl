@@ -52,6 +52,12 @@ path_kraken2 = "kraken2"
 args_kraken2 = ``
 path_kraken2_db = "none"
 
+path_kma = "kma"
+path_kma_db = "none"
+args_kma = `-1t1 -mem_mode -and`
+
+path_ccmetagen = "CCMetagen.py"
+
 # Accession to Taxonomy database; a file ending with sql (taxonomizr)
 path_taxonomizr_db = abspath(homedir(), ".BioPipelines", "db", "taxonomizr", "accessionTaxa.sql")
 
