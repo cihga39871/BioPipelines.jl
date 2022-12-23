@@ -41,7 +41,8 @@ _prog_kma() = JuliaProgram(
         isfile(INPUT_R2)
     end,
     validate_outputs = quote
-        
+        res = OUT_PREF * ".res"
+        isfile(res) && filesize(res) > 0
     end,
     arg_forward      = ["THREADS" => :ncpu]
 )
