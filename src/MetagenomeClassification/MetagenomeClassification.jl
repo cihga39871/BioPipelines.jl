@@ -5,7 +5,7 @@ using ..Config
 
 using ..Common
 
-using DataFrames, FASTX
+using DataFrames, FASTX, CSV
 
 include("kma_and_ccmetagen.jl")
 export dep_kma, prog_kma
