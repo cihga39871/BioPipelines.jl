@@ -9,13 +9,13 @@ function merge_tables(file_paths::Vector; file_labels::Union{Nothing, Vector} = 
             file_label = file_labels[i]
             insertcols!(df, 1, label_name => file_label)
             if i > 1
-                append!(dfs[1], df)
+                append!(dfs[1], df, promote=true)
             end
         end
     else
         for (i, df) in enumerate(dfs)
             if i > 1
-                append!(dfs[1], df)
+                append!(dfs[1], df, promote=true)
             end
         end
     end
