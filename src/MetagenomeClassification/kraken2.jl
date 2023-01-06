@@ -24,6 +24,27 @@ _prog_kraken2() = CmdProgram(
     arg_forward      = ["THREADS" => :ncpu]
 )
 
+_prog_kraken2_paired() = CmdProgram(
+    name = "Kraken2 paired reads",
+    id_file = ".kraken2.paired",
+    cmd_dependencies = [dep_kraken2],
+    inputs = [
+        "INPUT_R1" => String,
+        "INPUT_R2" => String,
+        "DB" => String => Config.path_kraken2_db,
+        :THREADS => Int => 1,
+        "OTHER_ARGS" => Cmd => Config.args_kraken2
+    ],
+    outputs = [
+        "UNCLASSIFIED_OUT" => String => "<INPUT_R1>.kraken2.unclassified#.fq",
+        "CLASSIFIED_OUT" => String => "<INPUT_R1>.kraken2.classified#.fq",
+        "OUTPUT" => String => "<INPUT_R1>.kraken2.out",
+        "REPORT" => String => "<INPUT_R1>.kraken2.report"
+    ],
+    cmd = `$dep_kraken2 --db DB --threads THREADS --unclassified-out UNCLASSIFIED_OUT --classified-out CLASSIFIED_OUT --output OUTPUT --report REPORT --paired INPUT_R1 INPUT_R2 OTHER_ARGS`,
+    arg_forward      = ["THREADS" => :ncpu]
+)
+
 const KRAKEN2_REPORT_HEADER = ["PctFragment", "NumFragment", "NumFragmentDirect", "RankCode", "TaxID", "ScientificName"]
 const KRAKEN2_REPORT_HEADER_TYPES = [Float64, Int64, Int64, String, Int64, String]
 
