@@ -16,9 +16,9 @@ parser$add_argument('-i', '--input', dest='input', metavar='FILE', type='charact
 parser$add_argument('-H', '--header', dest='header',
                     action='store_true',
                     help='does input has header?')
-parser$add_argument('-t', '--tax-id-column', dest='tax-id-column', metavar='COL', type='character',
+parser$add_argument('-t', '--tax-id-column', dest='tax-id-column', metavar='COL', type='integer',
                     default=5,
-                    help='the column index of Accession ID used for querying NCBI. If input is generated from blastn -outfmt 7, auto detect')
+                    help='tax id column number')
 parser$add_argument('-d', '--db', dest='db', metavar='db', type='character',
                     required=TRUE,
                     help='taxonomizr SQLite database')
@@ -44,19 +44,9 @@ for (input in inputs){
         next
     }
 
-    fields_line <- system(str_interp("grep -m1 '^# Fields: ' ${input}"), intern = TRUE)
+    dt <- read.delim(input, header = has_header, comment.char = '#')
 
-    if (length(fields_line) == 0) {
-        # not results from blastn -outfmt 7
-        dt <- read.delim(input, header = has_header, comment.char = '#')
-        tax_id_col_auto <- tax_id_col
-    } else {
-        fields <- str_split(str_remove(fields_line, "# Fields: "), ", ")[[1]]
-        dt <- read.delim(input, header = F, col.names = fields, check.names = FALSE, comment.char = '#')
-        tax_id_col_auto <- tax_id_col
-    }
-
-    ids <- dt[[tax_id_col_auto]]
+    ids <- dt[[tax_id_col]]
     taxs <- getTaxonomy(ids, db, desiredTaxa = c("superkingdom", "clade", "phylum", "class", "order", "family", "genus", "species", "subspecies", "strain"))
     dt <- cbind(dt, as.data.frame(taxs))
     write.table(dt, out, quote = F, sep = '\t', row.names = F)
