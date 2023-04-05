@@ -133,6 +133,7 @@ function get_full_lineage(lineage_marker_file; outfile = lineage_marker_file * "
     
     if nrow(df) == 0
         df_lineages = DataFrame(Lineage(), "")
+        df_sample_lineages = DataFrame[df_lineages]
         @goto final
     end
 
@@ -156,7 +157,7 @@ function get_full_lineage(lineage_marker_file; outfile = lineage_marker_file * "
             end
         end
         
-        df_sample_lineage = DataFrame(lineage, sample_id)
+        df_sample_lineage = DataFrame(lineage, String(sample_id))
 
         push!(df_sample_lineages, df_sample_lineage)
     end
