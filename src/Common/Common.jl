@@ -9,6 +9,9 @@ export dep_julia, prog_julia
 include("cmd.jl")
 export prog_cmd
 
+include("docker.jl")
+export dep_docker, docker_volume_autoreplace
+
 include("rscript.jl")
 export dep_rscript, prog_rscript
 

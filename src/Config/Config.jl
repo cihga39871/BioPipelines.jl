@@ -15,6 +15,7 @@ path_samtools = "samtools"
 path_blastn = "blastn"
 path_makeblastdb = "makeblastdb"
 path_rscript = "Rscript"
+path_docker = "docker"
 
 # QC
 path_fastqc = "fastqc"
@@ -34,6 +35,9 @@ args_bwa = ``
 path_bwa_mem2 = "bwa-mem2"
 args_bwa_mem2 = ``
 
+path_minimap2 = "minimap2"
+args_minimap2 = ``
+
 # Assembly
 path_masurca = "masurca"
 path_velveth = "velveth"
@@ -42,6 +46,10 @@ path_velvet_optimizer = "VelvetOptimiser.pl"
 args_velveth = ``
 args_velvetg = ``
 args_velvet_optimizer = ``
+
+# VariantCalling
+docker_img_deepvariant = "google/deepvariant:1.6.0"
+args_deepvariant = ``
 
 # GenomeClassification
 path_gtdbtk = "gtdbtk"
