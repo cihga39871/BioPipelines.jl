@@ -3,6 +3,8 @@ module Common
 using Pipelines
 using ..Config
 
+
+using Pkg
 include("julia.jl")
 export dep_julia, prog_julia
 

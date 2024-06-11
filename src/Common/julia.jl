@@ -1,5 +1,5 @@
 _dep_julia() = CmdDependency(
-    exec = `$(Base.julia_cmd())`,
+    exec = `$(Base.julia_cmd()) --project=$(dirname(Pkg.project().path))`,
     test_args = `--version`
 )
 
