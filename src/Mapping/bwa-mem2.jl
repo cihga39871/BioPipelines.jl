@@ -62,7 +62,8 @@ _prog_bwa_mem2() = CmdProgram(
         "READ2" => Union{String, Cmd} => ``,
         :THREADS => Int => 8,
         Symbol("THREADS_SAMTOOLS") => Int => 4,
-        "OTHER_ARGS" => Cmd => Config.args_bwa_mem2
+        "OTHER_ARGS" => Cmd => Config.args_bwa_mem2,
+        "OTHER_ARGS_SAMTOOLS" => Cmd => ``,
     ],
     validate_inputs  = i -> begin
         check_dependency_file(i["READ1"]) &&
@@ -74,7 +75,7 @@ _prog_bwa_mem2() = CmdProgram(
     cmd              = pipeline(
         `$dep_bwa_mem2 mem -t THREADS OTHER_ARGS INDEX READ1 READ2`,
         # `$dep_julia $(Config.SCRIPTS["sam_correction"])`, # remove error lines genrated by bwa
-        `$dep_samtools view -@ THREADS_SAMTOOLS -b -o BAM`
+        `$dep_samtools view -@ THREADS_SAMTOOLS -b -o BAM OTHER_ARGS_SAMTOOLS`
     ),
     infer_outputs    = do_nothing,
     outputs          = [
