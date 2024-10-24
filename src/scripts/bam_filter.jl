@@ -83,41 +83,21 @@ function BamTagFilter(argument::AbstractString)
 end
 
 function tag_name(tag_str::AbstractString)
-    if length(tag_str) < 6
-        error("Invalid tag: $tag_str")
-    end
-    tag_str[1:2]
+    @inbounds view(tag_str, 1:2)
 end
 
-function tag_type(tag_str::AbstractString)
-    type_dict = Dict(
-        'A' => String,
-        'i' => Int,
-        'f' => Float64,
-        'Z' => String,
-        'H' => Vector{UInt8},
-        'B' => Vector{Float64} # TODO: not exactly. see 1.5 section of https://samtools.github.io/hts-specs/SAMv1.pdf
-    )
-
-    if length(tag_str) < 6
-        error("Invalid tag: $tag_str")
-    end
-    return type_dict[tag_str[4]]
-end
+const value_conversion_dict = Dict(
+    'A' => String,
+    'i' => x -> parse(Int, x),
+    'f' => x -> parse(Float64, x),
+    'Z' => String,
+    'H' => hex2bytes,
+    'B' => x -> error("Not supported tag conversion for B type: $tag_str") # TODO: not exactly. see 1.5 section of https://samtools.github.io/hts-specs/SAMv1.pdf
+)
 
 function tag_value(tag_str::AbstractString)
-    value_conversion_dict = Dict(
-        'A' => String,
-        'i' => x -> parse(Int, x),
-        'f' => x -> parse(Float64, x),
-        'Z' => String,
-        'H' => hex2bytes,
-        'B' => x -> error("Not supported tag conversion for B type: $tag_str") # TODO: not exactly. see 1.5 section of https://samtools.github.io/hts-specs/SAMv1.pdf
-    )
-    if length(tag_str) < 6
-        error("Invalid tag: $tag_str")
-    end
-    return value_conversion_dict[tag_str[4]](tag_str[6:end])
+    global value_conversion_dict
+    return @inbounds value_conversion_dict[tag_str[4]](@view tag_str[6:end])
 end
 
 function filter_tag(splitted::Vector{SubString{String}}, filter::BamTagFilter)
@@ -129,7 +109,10 @@ function filter_tag(splitted::Vector{SubString{String}}, filter::BamTagFilter)
 
     i = 12
     while i <= n
-        tag_str = splitted[i]
+        tag_str = @inbounds splitted[i]
+        if length(tag_str) < 6
+            error("Invalid tag: $tag_str")
+        end
         if tag_name(tag_str) == filter.tag
             if filter.comparison(tag_value(tag_str), filter.value)
                 return true
@@ -149,7 +132,7 @@ function filter_map_quality(splitted::Vector{SubString{String}}, min_mq::Int = 0
     if n < 5
         return false
     end
-    return parse(Int, splitted[5]) >= min_mq
+    return parse(Int, @inbounds splitted[5]) >= min_mq
 end
 
 ### flag filter
@@ -165,7 +148,7 @@ function filter_flag(splitted::Vector{SubString{String}}; f::Int=0, F::Int=0, G:
     if n < 2
         return false
     end
-    flag = parse(Int, splitted[2])
+    flag = parse(Int, @inbounds splitted[2])
 
     f_result = f & flag == f
     F_result = F & flag == 0
@@ -202,7 +185,7 @@ mutable struct SamStats
     fail_map_qual::Int64
     fail_tag::Int64
 end
-sam_stats = SamStats(0,0,0,0,0)
+const sam_stats = SamStats(0,0,0,0,0)
 
 # filter process
 
@@ -246,19 +229,7 @@ else
     end
 end
 
-@eval function bam_filter_process(in::IO, out::IO, first_record_line::Bool, sam_stats::SamStats)
-
-    line = readline(in)
-    isempty(line) && return
-
-    if line[1] == '@'
-        println(out, line)
-        return true
-    elseif first_record_line
-        rand_id = abs(rand(Int8))
-        args_str = join(ARGS, " ")
-        println(out, "@PG\tID:bam_tag_filter.$rand_id\tPN:bam_tag_filter.jl\tCL:bam_tag_filter.jl $args_str")
-    end
+@eval function bam_filter_process(out::IO, line::AbstractString, sam_stats::SamStats)
 
     sam_stats.total_reads += 1
 
@@ -269,16 +240,35 @@ end
     $TAG_PROCESS
 
     sam_stats.pass_all += 1
-
     println(out, line)
-    return false
+
+    return true
 end
 
 function bam_filter_wrapper(in::IO, out::IO, sam_stats::SamStats)
 
     first_record_line = true
     while !eof(in)
-        first_record_line = bam_filter_process(in, out, first_record_line, sam_stats)
+        line = readline(in)
+        isempty(line) && continue
+
+        if line[1] == '@'
+            println(out, line)
+            continue
+        elseif first_record_line
+            rand_id = abs(rand(Int8))
+            args_str = join(ARGS, " ")
+            println(out, "@PG\tID:bam_tag_filter.$rand_id\tPN:bam_tag_filter.jl\tCL:bam_tag_filter.jl $args_str")
+        end
+
+        bam_filter_process(out, line, sam_stats)
+        break
+    end
+
+    while !eof(in)
+        line = readline(in)
+        isempty(line) && continue
+        bam_filter_process(out, line, sam_stats)
     end
 end
 
@@ -295,6 +285,8 @@ pct_fail_flag = round(sam_stats.fail_flag / sam_stats.total_reads * 100; digits 
 pct_fail_map_qual = round(sam_stats.fail_map_qual / sam_stats.total_reads * 100; digits = 3)
 pct_fail_tag = round(sam_stats.fail_tag / sam_stats.total_reads * 100; digits = 3)
 
+println(io_stats, "## Bam Filter")
+println(io_stats, "## Command: ", Cmd(ARGS))
 println(io_stats, "# Stats of Bam Filter")
 println(io_stats, "total\t$(sam_stats.total_reads)\t100.000%\ttotal input reads")
 println(io_stats, "passed\t$(sam_stats.pass_all)\t$pct_pass%\ttotal output reads")
