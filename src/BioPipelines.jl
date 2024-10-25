@@ -58,6 +58,10 @@ export Scripts
 include("utils.jl")
 export merge_tables
 
+include("FastProcessIO.jl")
+using .FastProcessIOs
+export FastInputStream
+
 # updating after all modules are loaded
 """
     biopipelines_init(;

@@ -8,6 +8,9 @@
 
 using BioPipelines.ArgParse
 
+include("FastProcessIO.jl")
+using .FastProcessIOs
+
 function parsing_args(args)
     prog_usage = """samtools view -h BAM | $(@__FILE__) args... | samtools view -b -o FILTERED_BAM"""
     prog_discription = "Filter sam records."
@@ -245,7 +248,7 @@ end
     return true
 end
 
-function bam_filter_wrapper(in::IO, out::IO, sam_stats::SamStats)
+function bam_filter_wrapper(in::FastInputStream, out::IO, sam_stats::SamStats)
 
     first_record_line = true
     while !eof(in)
@@ -272,7 +275,7 @@ function bam_filter_wrapper(in::IO, out::IO, sam_stats::SamStats)
     end
 end
 
-bam_filter_wrapper(stdin, io_sam, sam_stats)
+bam_filter_wrapper(FastInputStream(stdin), io_sam, sam_stats)
 io_sam isa Base.TTY || close(io_sam)
 
 
