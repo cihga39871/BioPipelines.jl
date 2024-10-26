@@ -2,9 +2,13 @@
 
 v0.3.11
 
-- Optim: `scripts/bam_filter.jl` is faster because of my new `FastProcessIO.jl`
+- Optim: `scripts/bam_filter.jl` is faster because of my new `FastProcessIOs.jl`. 
 
-- TODO: `FastProcessIO.jl` should asyncly read from source ::: `FastProcessIO_async.jl` shoule have no copyto between two buffers.
+**FastProcessIOs.jl Benchmark Using `samtools view -h -@10 BAM`:**
+
+- 1.28x faster in Julia v1.10.4.
+- 6.20x faster in Julia v1.11.1.
+
 
 v0.3.8
 

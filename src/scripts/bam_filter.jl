@@ -7,9 +7,11 @@
 # end
 
 using BioPipelines.ArgParse
+# using ArgParse
 
-include("FastProcessIO.jl")
-using .FastProcessIOs
+using BioPipelines.FastProcessIOs
+# include("../FastProcessIO.jl")
+# using .FastProcessIOs
 
 function parsing_args(args)
     prog_usage = """samtools view -h BAM | $(@__FILE__) args... | samtools view -b -o FILTERED_BAM"""

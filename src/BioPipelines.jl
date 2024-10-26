@@ -58,7 +58,7 @@ export Scripts
 include("utils.jl")
 export merge_tables
 
-include("FastProcessIO.jl")
+include("FastProcessIOs.jl")
 using .FastProcessIOs
 export FastInputStream
 
