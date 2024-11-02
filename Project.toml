@@ -1,10 +1,11 @@
 name = "BioPipelines"
 uuid = "3ee1394b-c0b4-492e-bb3c-d8bc89983562"
 authors = ["Jiacheng Chuan <jiacheng_chuan@outlook.com>"]
-version = "0.3.11"
+version = "0.3.12"
 
 [deps]
 ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
+BiBufferedStreams = "0a7c0d76-3150-4455-b428-d5f420c13001"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 CodecZlib = "944b1d66-785c-5afd-91f1-9de20f533193"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"

@@ -9,46 +9,46 @@
 using BioPipelines.ArgParse
 # using ArgParse
 
-using BioPipelines.FastProcessIOs
+using BioPipelines.BiBufferedStreams
 # include("../FastProcessIO.jl")
 # using .FastProcessIOs
 
 function parsing_args(args)
     prog_usage = """samtools view -h BAM | $(@__FILE__) args... | samtools view -b -o FILTERED_BAM"""
     prog_discription = "Filter sam records."
-    settings = ArgParseSettings(description = prog_discription, usage = prog_usage)
+    settings = ArgParseSettings(description=prog_discription, usage=prog_usage)
     @add_arg_table! settings begin
         "-f"
-            help = "only include reads with all of the FLAGs in INT present"
-            arg_type = Int
-            default = 0
+        help = "only include reads with all of the FLAGs in INT present"
+        arg_type = Int
+        default = 0
         "-F"
-            help = "only include reads with none of the FLAGS in INT present"
-            arg_type = Int
-            default = 0
+        help = "only include reads with none of the FLAGS in INT present"
+        arg_type = Int
+        default = 0
         "-G"
-            help = "only EXCLUDE reads with all of the FLAGs in INT present"
-            arg_type = Int
-            default = 0
+        help = "only EXCLUDE reads with all of the FLAGs in INT present"
+        arg_type = Int
+        default = 0
         "-q", "--min-MQ"
-            help = "include reads with mapping quality >= INT"
-            arg_type = Int
-            default = 0
+        help = "include reads with mapping quality >= INT"
+        arg_type = Int
+        default = 0
         "-t", "--tag-filter"
-            help = "tag filters. Eg: (numeric) XX>4, XX<=5.69, XX=6.6, XX==6.6; (string) XX=string, XX:has:string"
-            arg_type = String
-            nargs = '*'
+        help = "tag filters. Eg: (numeric) XX>4, XX<=5.69, XX=6.6, XX==6.6; (string) XX=string, XX:has:string"
+        arg_type = String
+        nargs = '*'
         "--any"
-            help = "if multiple tag filters, include reads if any tag filter passes."
-            action = :store_true
+        help = "if multiple tag filters, include reads if any tag filter passes."
+        action = :store_true
         "--stats"
-            help = "output stats delim-splitted table file"
-            default = "<stderr>"
-            arg_type = String
+        help = "output stats delim-splitted table file"
+        default = "<stderr>"
+        arg_type = String
         "--out", "-o"
-            help = "output filtered sam file"
-            default = "<stdout>"
-            arg_type = String
+        help = "output filtered sam file"
+        default = "<stdout>"
+        arg_type = String
     end
     return parse_args(args, settings)
 end
@@ -132,7 +132,7 @@ end # function
 
 ### mapping quality filter
 
-function filter_map_quality(splitted::Vector{SubString{String}}, min_mq::Int = 0)
+function filter_map_quality(splitted::Vector{SubString{String}}, min_mq::Int=0)
     n = length(splitted)
     if n < 5
         return false
@@ -190,7 +190,7 @@ mutable struct SamStats
     fail_map_qual::Int64
     fail_tag::Int64
 end
-const sam_stats = SamStats(0,0,0,0,0)
+const sam_stats = SamStats(0, 0, 0, 0, 0)
 
 # filter process
 
@@ -250,7 +250,7 @@ end
     return true
 end
 
-function bam_filter_wrapper(in::FastInputStream, out::IO, sam_stats::SamStats)
+function bam_filter_wrapper(in::BiBufferedStream, out::IO, sam_stats::SamStats)
 
     first_record_line = true
     while !eof(in)
@@ -277,7 +277,7 @@ function bam_filter_wrapper(in::FastInputStream, out::IO, sam_stats::SamStats)
     end
 end
 
-bam_filter_wrapper(FastInputStream(stdin), io_sam, sam_stats)
+bam_filter_wrapper(BiBufferedStream(stdin), io_sam, sam_stats)
 io_sam isa Base.TTY || close(io_sam)
 
 
@@ -285,10 +285,10 @@ io_sam isa Base.TTY || close(io_sam)
 str_flag = "include all $f, include none $F, exclude all $G"
 str_tag = join(args["tag-filter"], ",")
 
-pct_pass = round(sam_stats.pass_all / sam_stats.total_reads * 100; digits = 3)
-pct_fail_flag = round(sam_stats.fail_flag / sam_stats.total_reads * 100; digits = 3)
-pct_fail_map_qual = round(sam_stats.fail_map_qual / sam_stats.total_reads * 100; digits = 3)
-pct_fail_tag = round(sam_stats.fail_tag / sam_stats.total_reads * 100; digits = 3)
+pct_pass = round(sam_stats.pass_all / sam_stats.total_reads * 100; digits=3)
+pct_fail_flag = round(sam_stats.fail_flag / sam_stats.total_reads * 100; digits=3)
+pct_fail_map_qual = round(sam_stats.fail_map_qual / sam_stats.total_reads * 100; digits=3)
+pct_fail_tag = round(sam_stats.fail_tag / sam_stats.total_reads * 100; digits=3)
 
 println(io_stats, "## Bam Filter")
 println(io_stats, "## Command: ", Cmd(ARGS))

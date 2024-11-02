@@ -10,10 +10,11 @@ using FASTX
 using Pkg
 using DataFrames, DataFramesMeta, CSV, JSON, OrderedCollections  # QC/checkm, MetagenomeClassification/kraken2
 using FASTX # MetagenomeClassification/kraken2
+using BiBufferedStreams
 
 export biopipelines_init
 
-const VERSION = @PkgVersion.Version
+const VERSION = PkgVersion.@Version
 
 include(joinpath("Config", "Config.jl"))
 using .Config
@@ -58,10 +59,6 @@ export Scripts
 include("utils.jl")
 export merge_tables
 
-include("FastProcessIOs.jl")
-using .FastProcessIOs
-export FastInputStream
-
 # updating after all modules are loaded
 """
     biopipelines_init(;
@@ -89,12 +86,12 @@ You should call it *manually* for app building.
 If bundling in an app, please use `prepend_module_name = ".Mod"` in which `.Mod` using BioPipelines.
 """
 function biopipelines_init(;
-    config_files = joinpath(homedir(), ".BioPipelines", "config.jl"),
-    verbose::Bool = false, exit_when_fail::Bool = false, resolve_dep_and_prog::Bool = true,
-    prepend_module_name::String = ""
+    config_files=joinpath(homedir(), ".BioPipelines", "config.jl"),
+    verbose::Bool=false, exit_when_fail::Bool=false, resolve_dep_and_prog::Bool=true,
+    prepend_module_name::String=""
 )
-    Scripts.fix_scripts(;prepend_module_name = prepend_module_name)
-    Config.update_config(config_files; verbose = verbose, exit_when_fail = exit_when_fail, resolve_dep_and_prog = false)
+    Scripts.fix_scripts(; prepend_module_name=prepend_module_name)
+    Config.update_config(config_files; verbose=verbose, exit_when_fail=exit_when_fail, resolve_dep_and_prog=false)
     resolve_dep_and_prog && Config.update_dep_and_prog()
 end
 

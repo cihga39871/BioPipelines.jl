@@ -1,5 +1,9 @@
 # CHANGE LOG
 
+v0.3.12
+
+- Optim: `scripts/bam_filter.jl` is faster because of my BiBufferedStreams.jl.
+
 v0.3.11
 
 - Optim: `scripts/bam_filter.jl` is faster because of my new `FastProcessIOs.jl`. 
