@@ -250,7 +250,7 @@ end
     return true
 end
 
-function bam_filter_wrapper(in::BiBufferedStream, out::IO, sam_stats::SamStats)
+function bam_filter_wrapper(in, out::IO, sam_stats::SamStats)
 
     first_record_line = true
     while !eof(in)
@@ -277,7 +277,17 @@ function bam_filter_wrapper(in::BiBufferedStream, out::IO, sam_stats::SamStats)
     end
 end
 
-bam_filter_wrapper(BiBufferedStream(stdin), io_sam, sam_stats)
+in_stream = if v"1.11" <= VERSION < v"1.12"
+    BiBufferedStream(stdin)
+else
+    stdin
+end
+precompile(readline, (typeof(in_stream),))
+precompile(bam_filter_wrapper, (typeof(in_stream), typeof(io_sam), SamStats))
+
+elapsed = @elapsed bam_filter_wrapper(in_stream, io_sam, sam_stats)
+
+println(stderr, "Filter Bam: $elapsed seconds.")
 io_sam isa Base.TTY || close(io_sam)
 
 
