@@ -10,8 +10,7 @@ using BioPipelines.ArgParse
 # using ArgParse
 
 using BioPipelines.BiBufferedStreams
-# include("../FastProcessIO.jl")
-# using .FastProcessIOs
+# using BiBufferedStreams
 
 function parsing_args(args)
     prog_usage = """samtools view -h BAM | $(@__FILE__) args... | samtools view -b -o FILTERED_BAM"""
@@ -105,7 +104,7 @@ function tag_value(tag_str::AbstractString)
     return @inbounds value_conversion_dict[tag_str[4]](@view tag_str[6:end])
 end
 
-function filter_tag(splitted::Vector{SubString{String}}, filter::BamTagFilter)
+function filter_tag(splitted::Vector{SubString{T}}, filter::BamTagFilter) where T
     n = length(splitted)
     if n < 12
         # no Tag
@@ -132,7 +131,7 @@ end # function
 
 ### mapping quality filter
 
-function filter_map_quality(splitted::Vector{SubString{String}}, min_mq::Int=0)
+function filter_map_quality(splitted::Vector{SubString{T}}, min_mq::Int=0) where T
     n = length(splitted)
     if n < 5
         return false
@@ -148,7 +147,7 @@ end
     F INT       only include reads with none of the FLAGS in INT present [0x900]
     G INT       only EXCLUDE reads with all  of the FLAGs in INT present [0]
 """
-function filter_flag(splitted::Vector{SubString{String}}; f::Int=0, F::Int=0, G::Int=0)
+function filter_flag(splitted::Vector{SubString{T}}; f::Int=0, F::Int=0, G::Int=0) where T
     n = length(splitted)
     if n < 2
         return false
@@ -282,6 +281,7 @@ in_stream = if v"1.11" <= VERSION < v"1.12"
 else
     stdin
 end
+
 precompile(readline, (typeof(in_stream),))
 precompile(bam_filter_wrapper, (typeof(in_stream), typeof(io_sam), SamStats))
 
