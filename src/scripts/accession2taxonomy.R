@@ -33,7 +33,7 @@ for (input in inputs){
     
     out <- str_replace_all(args$output, "<input>", input)
     
-    nline <- system(str_interp("grep -cv '^#' ${input}"), intern = TRUE)
+    nline <- system2("grep", args = c("-cv", "'^#'", input), stdout = TRUE, stderr = FALSE)
     if (nline == "0") {
         # input is empty
         writeLines(str_interp("Accession2Taxonomy: input is empty: ${input}"))
@@ -41,7 +41,7 @@ for (input in inputs){
         next
     }
 
-    fields_line <- system(str_interp("grep -m1 '^# Fields: ' ${input}"), intern = TRUE)
+    fields_line <- system2("grep", args = c("-m1", "'^# Fields: '", input), stdout = TRUE, stderr = FALSE)
 
     if (length(fields_line) == 0) {
         # not results from blastn -outfmt 7
