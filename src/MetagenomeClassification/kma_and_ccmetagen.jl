@@ -62,7 +62,7 @@ _prog_kma() = JuliaProgram(
         isfile(DB * ".name") &&
         isfile(DB * ".seq.b") &&
         isfile(INPUT_R1) &&
-        isfile(INPUT_R2)
+        (INPUT_R2 == "" || isfile(INPUT_R2))
     end,
     validate_outputs = quote
         res = OUT_PREF * ".res"

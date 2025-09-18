@@ -15,7 +15,7 @@ _prog_gtdbtk_classify_wf() = CmdProgram(
         "OTHER_ARGS" => Cmd => ``
     ],
     outputs = "OUTPUT_DIR" => String => "<GENOME_DIR>/gtdbtk_classify",
-    cmd = `$dep_gtdbtk classify_wf --genome_dir GENOME_DIR --out_dir OUTPUT_DIR -x EXTENSION --cpus THREADS --pplacer_cpus THREADS OTHER_ARGS`,
+    cmd = `$dep_gtdbtk classify_wf --genome_dir GENOME_DIR --out_dir OUTPUT_DIR -x EXTENSION --cpus THREADS --pplacer_cpus THREADS --skip_ani_screen OTHER_ARGS`,
     arg_forward      = ["THREADS" => :ncpu]
 )
 
